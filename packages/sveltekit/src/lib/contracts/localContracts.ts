@@ -1,0 +1,26 @@
+/**
+ * 本地部署合约地址配置
+ * 此文件由 deployLocal.js 自动生成
+ * 请勿手动编辑
+ */
+
+export const LOCAL_CONTRACT_ADDRESSES = {
+  LUKE: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  LukeMain: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+  LukeNode: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+  LukeBurner: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+  GFT: "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
+  GftStaking: "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
+  Miner: "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",
+  MockUSDT: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  MockPancakeSwapRouter: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+  MockPancakeSwapFactory: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  LPPair: "0xF5334e8952B1863e7338Cb3EFC104Db897475Deb",
+  GftLpPair: "0x0dC3b5fb9fE73E7b02F91EDecc03457928D75B1D",
+} as const;
+
+export const LOCAL_NETWORK = {
+  chainId: 31337,
+  name: 'Local',
+  rpcUrl: 'http://localhost:8545',
+} as const;

@@ -1,0 +1,73 @@
+{
+  "name": "xfinalw3",
+  "version": "0.0.1",
+  "description": "A modern Web3 development framework for building dApps on Ethereum",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "account": "bun foundry:account",
+    "account:generate": "bun foundry:generate",
+    "account:import": "bun foundry:account-import",
+    "account:reveal-pk": "bun --filter @w3s/foundry account:reveal-pk",
+    "chain": "bun foundry:chain",
+    "compile": "bun foundry:compile",
+    "deploy": "bun foundry:deploy",
+    "deploy:local": "bun --filter @w3s/foundry deploy:local",
+    "flatten": "bun foundry:flatten",
+    "fork": "bun foundry:fork",
+    "format": "bun next:format && bun foundry:format",
+    "foundry:account": "bun --filter @w3s/foundry account",
+    "foundry:account-import": "bun --filter @w3s/foundry account:import",
+    "foundry:chain": "bun --filter @w3s/foundry chain",
+    "foundry:clean": "bun --filter @w3s/foundry clean",
+    "foundry:compile": "bun --filter @w3s/foundry compile",
+    "foundry:deploy": "bun --filter @w3s/foundry deploy",
+    "foundry:deploy-verify": "bun --filter @w3s/foundry deploy:verify",
+    "foundry:flatten": "bun --filter @w3s/foundry flatten",
+    "foundry:fork": "bun --filter @w3s/foundry fork",
+    "foundry:format": "bun --filter @w3s/foundry format",
+    "foundry:generate": "bun --filter @w3s/foundry account:generate",
+    "foundry:lint": "bun --filter @w3s/foundry lint",
+    "foundry:test": "bun --filter @w3s/foundry test",
+    "foundry:verify": "bun --filter @w3s/foundry verify",
+    "generate": "bun foundry:generate",
+    "postinstall": "husky install",
+    "indexer": "bun --filter @w3s/indexer dev",
+    "indexer:build": "bun --filter @w3s/indexer build",
+    "indexer:codegen": "bun --filter @w3s/indexer codegen",
+    "indexer:db": "bun --filter @w3s/indexer db",
+    "indexer:serve": "bun --filter @w3s/indexer serve",
+    "cron": "bun --filter @w3s/cron dev",
+    "start": "bun --filter @w3s/sveltekit dev",
+    "ipfs": "bun --filter @w3s/nextjs ipfs",
+    "lint": "bun next:lint && bun foundry:lint",
+    "next:build": "bun --filter @w3s/nextjs build",
+    "next:check-types": "bun --filter @w3s/nextjs check-types",
+    "next:format": "bun --filter @w3s/nextjs format",
+    "next:lint": "bun --filter @w3s/nextjs lint",
+    "next:serve": "bun --filter @w3s/nextjs serve",
+    "precommit": "lint-staged",
+    "test": "bun foundry:test",
+    "vercel": "bun --filter @w3s/nextjs vercel",
+    "vercel:login": "bun --filter @w3s/nextjs vercel:login",
+    "vercel:yolo": "bun --filter @w3s/nextjs vercel:yolo",
+    "verify": "bun foundry:verify",
+    "biome:check": "biome check .",
+    "biome:format": "biome format --write .",
+    "biome:lint": "biome lint .",
+    "biome:ci": "biome ci ."
+  },
+  "devDependencies": {
+    "biome": "^0.3.3",
+    "husky": "~9.1.6",
+    "lint-staged": "~13.2.2"
+  },
+  "packageManager": "bun@latest",
+  "engines": {
+    "node": ">=20.18.3"
+  }
+}

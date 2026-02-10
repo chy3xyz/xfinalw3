@@ -1,0 +1,607 @@
+---
+description: SvelteKit 前端开发规范和最佳实践
+globs: packages/sveltekit/**/*.{svelte,ts,js}
+alwaysApply: false
+---
+
+# SvelteKit 前端开发规范
+
+## 项目结构
+
+```
+packages/sveltekit/
+├── src/
+│   ├── lib/
+│   │   ├── components/      # 可复用组件
+│   │   │   ├── ui/          # shadcn-svelte UI 组件
+│   │   │   ├── Header.svelte          # 顶部导航
+│   │   │   ├── BottomNav.svelte       # 底部导航（首页、调试、浏览器）
+│   │   │   ├── EarthAnimation.svelte   # 地球动画
+│   │   │   ├── AnnouncementBanner.svelte # 通告横幅
+│   │   │   ├── InviteFriend.svelte     # 邀请好友示例
+│   │   │   └── ...          # 其他业务组件
+│   │   ├── stores/          # Svelte stores
+│   │   ├── utils/           # 工具函数
+│   │   └── contracts/        # 合约定义（自动生成）
+│   ├── routes/               # 页面路由
+│   │   ├── +layout.svelte   # 布局（暗色主题）
+│   │   ├── +page.svelte     # 首页
+│   │   ├── debug/           # Debug 页面
+│   │   └── blockexplorer/   # 区块浏览器页面
+│   └── app.css              # 全局样式（暗色主题）
+├── scaffold.config.ts        # 项目配置
+└── components.json          # shadcn-svelte 配置
+```
+
+## 合约交互规范
+
+### 读取合约数据
+
+**必须使用** `createScaffoldReadContractStore`：
+
+```typescript
+// ✅ GOOD
+import { get } from 'svelte/store';
+import { createScaffoldReadContractStore } from '$lib/stores/scaffoldReadContract.js';
+
+// 在 script 标签中创建 store
+const readStore = createScaffoldReadContractStore({
+  contractName: "Counter",
+  functionName: "getCount",
+  watch: true, // 默认 true，自动监听更新
+});
+
+// 在 script 中获取值
+const result = get(readStore);
+const data = result?.data;
+
+// 在模板中使用响应式订阅
+{#if $readStore?.data !== undefined}
+  <p>{$readStore.data}</p>
+{/if}
+```
+
+### 写入合约数据
+
+**必须使用** `createScaffoldWriteContractStore`：
+
+```typescript
+// ✅ GOOD
+import { createScaffoldWriteContractStore } from '$lib/stores/scaffoldWriteContract.js';
+import { parseEther } from 'viem';
+import { notification } from '$lib/utils/notification.js';
+
+// 创建 store
+const writeStore = createScaffoldWriteContractStore({
+  contractName: "Counter"
+});
+
+// 提取 isMining store 用于响应式订阅
+const isMiningStore = writeStore.isMining;
+
+// 调用写入函数
+async function handleIncrement() {
+  try {
+    await writeStore.writeContractAsync({
+      functionName: "increment",
+    });
+    notification.success("Success!");
+  } catch (error: any) {
+    notification.error(error?.message || "Failed");
+  }
+}
+
+// 检查交易状态（必须使用提取的 store）
+{#if $isMiningStore}
+  <p>处理中...</p>
+{/if}
+```
+
+### 监听合约事件
+
+**使用** `createScaffoldEventHistoryStore`：
+
+```typescript
+// ✅ GOOD
+import { createScaffoldEventHistoryStore } from '$lib/stores/scaffoldEventHistory.js';
+
+const eventStore = createScaffoldEventHistoryStore({
+  contractName: "Counter",
+  eventName: "CountUpdated",
+  watch: true, // 监听新事件
+});
+
+// 在模板中显示事件
+{#if $eventStore.data}
+  {#each $eventStore.data as event (event.logIndex)}
+    <div>
+      <p>新计数: {event.args.newCount}</p>
+    </div>
+  {/each}
+{/if}
+```
+
+### ❌ 禁止的模式
+
+```typescript
+// ❌ BAD - 不要直接使用 wagmi hooks
+import { useReadContract } from 'wagmi';
+
+// ❌ BAD - 不要手动导入合约 ABI
+import { abi } from './contracts/abi.json';
+
+// ❌ BAD - 不要直接使用 viem 的 readContract
+import { readContract } from '@wagmi/core';
+
+// ❌ BAD - 不要直接订阅 writeStore.isMining
+{#if $writeStore.isMining}  // ❌ 错误
+{#if $isMiningStore}  // ✅ 正确
+```
+
+## Svelte 组件规范
+
+### 组件结构
+
+```svelte
+<script lang="ts">
+  // 1. 导入
+  import { onMount } from 'svelte';
+  import { Button } from '$lib/components/ui/button';
+  
+  // 2. 类型定义
+  interface Props {
+    title: string;
+  }
+  
+  // 3. Props
+  let { title }: Props = $props();
+  
+  // 4. 响应式变量
+  let count = $state(0);
+  
+  // 5. 生命周期
+  onMount(() => {
+    // 初始化逻辑
+  });
+  
+  // 6. 函数
+  function handleClick() {
+    count++;
+  }
+</script>
+
+<!-- 7. 模板 -->
+<div>
+  <h1>{title}</h1>
+  <Button on:click={handleClick}>点击</Button>
+  <p>计数: {count}</p>
+</div>
+
+<!-- 8. 样式 -->
+<style>
+  div {
+    padding: 1rem;
+  }
+</style>
+```
+
+### Svelte 5 语法
+
+```svelte
+<script lang="ts">
+  // ✅ GOOD - 使用 $state 和 $props
+  let count = $state(0);
+  let { title = "默认标题" }: { title?: string } = $props();
+  
+  // ✅ GOOD - 使用 $derived 计算值
+  let doubled = $derived(count * 2);
+  
+  // ✅ GOOD - 使用 $effect 副作用
+  $effect(() => {
+    console.log('Count changed:', count);
+  });
+</script>
+```
+
+### 组件命名
+
+- 组件文件使用 PascalCase：`UserCard.svelte`
+- UI 组件放在 `$lib/components/ui/`
+- 业务组件放在 `$lib/components/` 或按功能分组
+
+## UI 组件使用
+
+### shadcn-svelte 组件
+
+项目使用 shadcn-svelte，组件位于 `$lib/components/ui/`：
+
+```svelte
+<script lang="ts">
+  import { Button } from '$lib/components/ui/button';
+  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import { Input } from '$lib/components/ui/input';
+  import { Dialog, DialogContent, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
+</script>
+
+<Card>
+  <CardHeader>
+    <CardTitle>标题</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <Input placeholder="输入..." />
+    <Button>提交</Button>
+  </CardContent>
+</Card>
+```
+
+### 样式工具
+
+使用 `cn` 工具函数合并 Tailwind 类：
+
+```svelte
+<script lang="ts">
+  import { cn } from '$lib/utils/cn.js';
+</script>
+
+<div class={cn("base-class", isActive && "active-class")}>
+  内容
+</div>
+```
+
+## Store 使用规范
+
+### 自定义 Store
+
+```typescript
+// ✅ GOOD - 创建响应式 store
+import { writable, derived } from 'svelte/store';
+
+export const userStore = writable<User | null>(null);
+
+export const userNameStore = derived(
+  userStore,
+  ($user) => $user?.name ?? 'Unknown'
+);
+```
+
+### 合约相关 Store
+
+使用项目提供的专用 store：
+
+- `createScaffoldReadContractStore` - 读取合约
+- `createScaffoldWriteContractStore` - 写入合约（注意：需要提取 `isMining` store）
+- `createScaffoldEventHistoryStore` - 事件历史
+- `createDeployedContractStore` - 部署的合约信息
+- `createScaffoldContractStore` - 合约配置
+
+## 路由和页面
+
+### 页面结构
+
+```svelte
+<!-- src/routes/my-page/+page.svelte -->
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
+  
+  // 页面逻辑
+</script>
+
+<svelte:head>
+  <title>页面标题</title>
+</svelte:head>
+
+<div class="container mx-auto px-4 py-6">
+  <!-- 页面内容 -->
+</div>
+```
+
+### 布局
+
+使用 `+layout.svelte` 定义共享布局：
+
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script lang="ts">
+  import { page } from '$app/stores';
+  import Header from '$lib/components/Header.svelte';
+  import BottomNav from '$lib/components/BottomNav.svelte';
+  import Toast from '$lib/components/Toast.svelte';
+  
+  // debug、blockexplorer 页面不显示底部导航
+  $: hideFooter = $page.url.pathname === '/debug' || 
+                  $page.url.pathname.startsWith('/debug/') || 
+                  $page.url.pathname === '/blockexplorer' || 
+                  $page.url.pathname.startsWith('/blockexplorer/');
+</script>
+
+<div class="luke-app-wrapper text-white" data-theme="dark">
+  <div class="background-container">
+    <div class="content-wrapper">
+      <Header />
+      <main class="relative flex flex-col flex-1 text-foreground min-h-0">
+        <slot />
+      </main>
+      {#if !hideFooter}
+        <BottomNav />
+      {/if}
+    </div>
+  </div>
+  <Toast />
+</div>
+```
+
+## 钱包连接
+
+### WalletConnect 集成
+
+项目使用 Reown AppKit（原 WalletConnect AppKit）：
+
+```svelte
+<script lang="ts">
+  import { browser } from '$app/environment';
+  import { get } from 'svelte/store';
+  import { getAccount } from '@wagmi/core';
+  import { wagmiContextStore } from '$lib/contexts/wagmi.js';
+  import WalletConnectButton from '$lib/components/WalletConnectButton.svelte';
+  
+  let account: ReturnType<typeof getAccount> | null = null;
+  let isConnected = false;
+  
+  if (browser) {
+    try {
+      const { config } = get(wagmiContextStore);
+      if (config) {
+        account = getAccount(config);
+        isConnected = account?.isConnected ?? false;
+      }
+    } catch {
+      account = null;
+      isConnected = false;
+    }
+  }
+</script>
+
+{#if isConnected && account?.address}
+  <p>已连接: {account.address}</p>
+{:else}
+  <WalletConnectButton />
+{/if}
+```
+
+## 错误处理
+
+### 合约错误处理
+
+```typescript
+// ✅ GOOD - 错误处理
+import { notification } from '$lib/utils/notification.js';
+
+try {
+  await writeStore.writeContractAsync({
+    functionName: "increment",
+  });
+  notification.success("Success!");
+} catch (error: any) {
+  notification.error(error?.message || "Failed");
+}
+```
+
+### 通知系统
+
+```typescript
+// ✅ GOOD - 使用统一的通知系统
+import { notification } from '$lib/utils/notification.js';
+
+notification.success("操作成功");
+notification.error("操作失败");
+notification.info("提示信息");
+```
+
+## 类型安全
+
+### TypeScript 类型
+
+```typescript
+// ✅ GOOD - 使用项目提供的类型
+import type { Address } from 'viem';
+import type { ContractName } from '$lib/utils/contract.js';
+
+function processContract(
+  contractName: ContractName,
+  address: Address
+) {
+  // 类型安全
+}
+```
+
+### 合约类型
+
+合约类型从 `deployedContracts.ts` 自动生成：
+
+```typescript
+import { contracts } from '$lib/utils/contract.js';
+import type { ContractAbi } from '$lib/utils/contract.js';
+
+// 使用类型安全的合约访问
+const contract = contracts?.[chainId]?.Counter;
+```
+
+## 性能优化
+
+### 响应式优化
+
+```svelte
+<script lang="ts">
+  // ✅ GOOD - 使用 $derived 避免不必要的计算
+  let items = $state([1, 2, 3]);
+  let filtered = $derived(items.filter(x => x > 1));
+  
+  // ✅ GOOD - 使用 $effect 处理副作用
+  $effect(() => {
+    // 只在 items 变化时执行
+    console.log('Items changed');
+  });
+</script>
+```
+
+### 条件渲染
+
+```svelte
+<!-- ✅ GOOD - 使用条件块 -->
+{#if isLoading}
+  <Skeleton />
+{:else if error}
+  <ErrorDisplay />
+{:else}
+  <Content />
+{/if}
+```
+
+## 样式规范
+
+### Tailwind CSS
+
+项目使用 Tailwind CSS，配置在 `tailwind.config.js`：
+
+```svelte
+<!-- ✅ GOOD - 使用 Tailwind 类 -->
+<div class="flex items-center gap-4 p-4 bg-card rounded-lg">
+  <Button class="w-full">按钮</Button>
+</div>
+```
+
+### 主题变量
+
+项目使用暗色主题，通过 CSS 变量定义：
+
+```svelte
+<style>
+  .custom-element {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border-radius: var(--radius);
+  }
+</style>
+```
+
+### 暗色主题
+
+布局使用 `data-theme="dark"` 和 `text-white` 类确保暗色主题：
+
+```svelte
+<div class="luke-app-wrapper text-white" data-theme="dark">
+  <!-- 内容 -->
+</div>
+```
+
+## 常见错误避免
+
+### ❌ 避免的错误
+
+1. **直接使用 wagmi hooks**
+   ```typescript
+   // ❌ BAD
+   import { useReadContract } from 'wagmi';
+   
+   // ✅ GOOD
+   import { createScaffoldReadContractStore } from '$lib/stores/scaffoldReadContract.js';
+   ```
+
+2. **手动管理合约地址**
+   ```typescript
+   // ❌ BAD
+   const contractAddress = "0x123...";
+   
+   // ✅ GOOD
+   const contractStore = createDeployedContractStore({ contractName: "Counter" });
+   ```
+
+3. **在 SSR 中访问浏览器 API 或 Wagmi 未就绪时调用**
+   ```typescript
+   // ❌ BAD
+   const account = getAccount();
+   
+   // ✅ GOOD
+   import { browser } from '$app/environment';
+   import { get } from 'svelte/store';
+   import { getAccount } from '@wagmi/core';
+   import { wagmiContextStore } from '$lib/contexts/wagmi.js';
+   
+   let account: ReturnType<typeof getAccount> | null = null;
+   if (browser) {
+     try {
+       const { config } = get(wagmiContextStore);
+       if (config) {
+         account = getAccount(config);
+       }
+     } catch {
+       account = null;
+     }
+   }
+   ```
+
+4. **忽略错误处理**
+   ```typescript
+   // ❌ BAD
+   await writeStore.writeContractAsync({ functionName: "increment" });
+   
+   // ✅ GOOD
+   try {
+     await writeStore.writeContractAsync({ functionName: "increment" });
+     notification.success("成功");
+   } catch (error) {
+     notification.error("失败");
+   }
+   ```
+
+5. **错误使用 writeStore.isMining**
+   ```typescript
+   // ❌ BAD - 直接订阅 writeStore.isMining
+   {#if $writeStore.isMining}
+   
+   // ✅ GOOD - 先提取 store
+   const isMiningStore = writeStore.isMining;
+   {#if $isMiningStore}
+   ```
+
+## 配置
+
+### scaffold.config.ts
+
+编辑 `scaffold.config.ts` 配置目标网络：
+
+```typescript
+const scaffoldConfig = {
+  targetNetworks: [chains.foundry], // 目标网络
+  pollingInterval: 30000, // 轮询间隔
+  alchemyApiKey: import.meta.env.VITE_ALCHEMY_API_KEY,
+  walletConnectProjectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
+} as const satisfies ScaffoldConfig;
+```
+
+### 环境变量
+
+在 `.env` 文件中配置：
+
+```env
+VITE_ALCHEMY_API_KEY=your-api-key
+VITE_WALLET_CONNECT_PROJECT_ID=your-project-id
+```
+
+## 首页组件参考
+
+首页 (`+page.svelte`) 包含以下示例组件，可作为开发参考：
+
+- **AnnouncementBanner**: 滚动通告横幅
+- **EarthAnimation**: SVG 动画地球组件
+- **Counter 合约示例**: 完整的合约交互示例
+- **InviteFriend**: 邀请好友功能示例
+- **Quick Start**: 快速开始指南
+
+这些组件展示了：
+- 合约 stores 的正确使用方式
+- 钱包连接状态处理
+- shadcn-svelte UI 组件使用
+- 响应式交互实现
+- 暗色主题样式

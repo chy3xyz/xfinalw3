@@ -1,0 +1,163 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+This codebase contains xfinalw3, a modern Web3 development framework for building dApps on Ethereum. Its tech stack is SvelteKit, Wagmi, Viem and TypeScript. Supports Ponder, cron, bun Foundry.
+
+It's a yarn monorepo that contains following packages:
+
+- FOUNDRY (`packages/foundry`): The solidity framework to write, test and deploy EVM Smart Contracts.
+- SvelteKit (`packages/sveltekit`): The UI framework extended with utilities to make interacting with Smart Contracts easy (using SvelteKit with Svelte 5).
+- Indexer (`packages/indexer`): The Indexer with ponder.sh
+- Cron(`packages/crom`): bun crom
+
+
+The usual dev flow is:
+
+- Start xfinalw3 locally:
+  - `bun chain`: Starts a local blockchain network
+  - `bun deploy:local`: Deploys default contracts (Counter example)
+  - `bun start`: Starts the frontend
+  - `bun indexer`: Starts the indexer
+  - `bun cron`: Starts the cron
+- Write a Smart Contract (modify the deployment script in `packages/foundry/script` if needed)
+- Deploy it locally (`bun deploy:local`)
+- Go to the `http://localhost:5173/debug` page to interact with your contract with a nice UI
+- Iterate until you get the functionality you want in your contract
+- Write tests for the contract in `packages/foundry/test`
+- Create your custom UI using all the W3S components, stores, and utilities.
+- Deploy your Smart Contrac to a live network
+- Deploy your UI (`bun vercel` or `bun ipfs`)
+  - You can tweak which network the frontend is pointing (and some other configurations) in `scaffold.config.ts`
+
+## Smart Contract UI interactions guidelines
+xfinalw3 provides a set of Svelte stores that facilitates contract interactions from the UI. It reads the contract data from `deployedContracts.ts` and `externalContracts.ts`, located in `packages/sveltekit/src/lib/contracts`.
+
+### Reading data from a contract
+Use the `createScaffoldReadContractStore` (`packages/sveltekit/src/lib/stores/scaffoldReadContract.ts`) store. 
+
+Example:
+```typescript
+import { get } from 'svelte/store';
+import { createScaffoldReadContractStore } from '$lib/stores/scaffoldReadContract.js';
+
+// Create the store
+const readStore = createScaffoldReadContractStore({
+  contractName: "YourContract",
+  functionName: "functionName",
+  args: [arg1, arg2], // optional
+  watch: true, // optional, defaults to true
+});
+
+// In script: Get the value using get()
+const result = get(readStore);
+const data = result?.data;
+
+// In template: Use $ syntax for reactive subscription
+// {#if $readStore?.data}
+//   <p>{$readStore.data}</p>
+// {/if}
+```
+
+### Writing data to a contract
+Use the `createScaffoldWriteContractStore` (`packages/sveltekit/src/lib/stores/scaffoldWriteContract.ts`) store.
+1. Initialize the store with just the contract name
+2. Call the `writeContractAsync` function.
+
+Example:
+```typescript
+import { createScaffoldWriteContractStore } from '$lib/stores/scaffoldWriteContract.js';
+import { parseEther } from 'viem';
+
+// Create the store
+const writeStore = createScaffoldWriteContractStore({
+  contractName: "YourContract"
+});
+
+// Usage (this will send a write transaction to the contract)
+await writeStore.writeContractAsync({
+  functionName: "functionName",
+  args: [arg1, arg2], // optional
+  value: parseEther("0.1"), // optional, for payable functions
+});
+
+// Check if transaction is mining
+// In template: {#if $writeStore.isMining}Processing...{/if}
+```
+
+Never use any other patterns for contract interaction. The stores are:
+- createScaffoldReadContractStore (for reading)
+- createScaffoldWriteContractStore (for writing)
+
+### Reading events from a contract
+
+Use the `createScaffoldEventHistoryStore` (`packages/sveltekit/src/lib/stores/scaffoldEventHistory.ts`) store.
+
+Example:
+
+```typescript
+import { get } from 'svelte/store';
+import { createScaffoldEventHistoryStore } from '$lib/stores/scaffoldEventHistory.js';
+
+// Create the store
+const eventStore = createScaffoldEventHistoryStore({
+  contractName: "YourContract",
+  eventName: "GreetingChange",
+  watch: true, // optional, if true, the store will watch for new events
+});
+
+// In script: Get events using get()
+const events = get(eventStore.data);
+
+// In template: Use $ syntax for reactive subscription
+```
+
+The `data` property consists of an array of events and can be displayed as:
+
+```svelte
+{#if $eventStore.data}
+  {#each $eventStore.data as event (event.logIndex)}
+    <div>
+      <p>{event.args.greetingSetter}</p>
+      <p>{event.args.newGreeting}</p>
+      <p>{event.args.premium}</p>
+      <p>{event.args.value}</p>
+    </div>
+  {/each}
+{/if}
+```
+
+### Other Stores
+xfinalw3 also provides other stores to interact with blockchain data: `createScaffoldWatchContractEventStore`, `createScaffoldEventHistoryStore`, `createDeployedContractStore`, `createScaffoldContractStore`, `createTransactor`. They live under `packages/sveltekit/src/lib/stores`.
+
+## Display Components guidelines
+xfinalw3 provides a set of pre-built Svelte components for common Ethereum use cases, located in `packages/sveltekit/src/lib/components`:
+
+- `Address`: Always use this when displaying an ETH address (`packages/sveltekit/src/lib/components/Address.svelte`)
+- `Balance`: Display the ETH/USDC balance of a given address (`packages/sveltekit/src/lib/components/Balance.svelte`)
+- `WalletConnectButton`: Connect wallet button (`packages/sveltekit/src/lib/components/WalletConnectButton.svelte`)
+- `FaucetButton`: Faucet button for test networks (`packages/sveltekit/src/lib/components/FaucetButton.svelte`)
+- `EarthAnimation`: Animated Earth component for homepage (`packages/sveltekit/src/lib/components/EarthAnimation.svelte`)
+- `AnnouncementBanner`: Scrollable announcement banner (`packages/sveltekit/src/lib/components/AnnouncementBanner.svelte`)
+- `InviteFriend`: Invite friend component example (`packages/sveltekit/src/lib/components/InviteFriend.svelte`)
+
+For fully customizable components, you can use the stores from `packages/sveltekit/src/lib/stores` to get the data you need.
+
+## Theme and Layout
+
+The framework uses a dark theme by default. The layout (`+layout.svelte`) includes:
+- Header with xfinalw3 branding
+- Bottom navigation (Home, Debug, Explorer) - hidden on debug/blockexplorer pages
+- Dark theme with `data-theme="dark"` attribute
+- Toast notification system
+
+The homepage (`+page.svelte`) includes:
+- Announcement banner
+- Earth animation
+- Counter contract example
+- Invite friend component
+- Quick start guide
+
+Find the relevant information from the documentation and the codebase. Think step by step before answering the question.

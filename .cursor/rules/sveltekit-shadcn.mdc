@@ -1,0 +1,516 @@
+# SvelteKit + shadcn-svelte 开发规范
+
+本项目使用 SvelteKit 5 + shadcn-svelte + Tailwind CSS v4 构建前端。
+
+## 技术栈
+
+- **SvelteKit 5** - 使用 Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`)
+- **shadcn-svelte** - UI 组件库 (基于 bits-ui)
+- **Tailwind CSS v4** - 样式框架
+- **TypeScript** - 类型安全
+- **Wagmi + Viem** - Web3 交互
+
+## 项目结构
+
+```
+packages/sveltekit/
+├── src/
+│   ├── lib/
+│   │   ├── components/      # 业务组件
+│   │   │   ├── ui/          # shadcn-svelte UI 组件
+│   │   │   │   ├── button/
+│   │   │   │   ├── card/
+│   │   │   │   ├── input/
+│   │   │   │   └── ...
+│   │   │   ├── Header.svelte
+│   │   │   ├── Footer.svelte
+│   │   │   └── ...
+│   │   ├── stores/          # Svelte stores
+│   │   ├── utils/           # 工具函数
+│   │   │   └── cn.ts        # className 合并工具
+│   │   ├── contracts/       # 合约 ABI 和地址
+│   │   └── i18n/            # 国际化
+│   ├── routes/              # SvelteKit 路由
+│   └── app.css              # 全局样式 + CSS 变量
+├── scaffold.config.ts       # 项目配置
+└── package.json
+```
+
+## shadcn-svelte 组件使用
+
+### 已安装的 UI 组件
+
+位于 `src/lib/components/ui/`:
+
+- `alert` - 警告提示
+- `avatar` - 头像
+- `badge` - 徽章
+- `button` - 按钮
+- `card` - 卡片
+- `dialog` - 对话框/模态框
+- `dropdown-menu` - 下拉菜单
+- `input` - 输入框
+- `label` - 标签
+- `progress` - 进度条
+- `separator` - 分隔线
+- `skeleton` - 骨架屏
+- `switch` - 开关
+- `tabs` - 标签页
+
+### 添加新组件
+
+```bash
+# 在 packages/sveltekit 目录下执行
+bunx shadcn-svelte@next add <component-name>
+
+# 例如添加 dialog 组件
+bunx shadcn-svelte@next add dialog
+bunx shadcn-svelte@next add tabs
+bunx shadcn-svelte@next add alert
+bunx shadcn-svelte@next add avatar
+bunx shadcn-svelte@next add progress
+bunx shadcn-svelte@next add tooltip
+bunx shadcn-svelte@next add sheet
+bunx shadcn-svelte@next add switch
+bunx shadcn-svelte@next add select
+```
+
+### 组件导入方式
+
+```svelte
+<script lang="ts">
+  import { Button } from "$lib/components/ui/button";
+  import { Card, CardContent, CardHeader, CardTitle } from "$lib/components/ui/card";
+  import { Input } from "$lib/components/ui/input";
+  import { Label } from "$lib/components/ui/label";
+  import { Badge } from "$lib/components/ui/badge";
+</script>
+
+<Card>
+  <CardHeader>
+    <CardTitle>标题</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <Label for="email">邮箱</Label>
+        <Input id="email" type="email" placeholder="输入邮箱" />
+      </div>
+      <Button>提交</Button>
+    </div>
+  </CardContent>
+</Card>
+```
+
+### Button 变体
+
+```svelte
+<Button variant="default">默认</Button>
+<Button variant="secondary">次要</Button>
+<Button variant="outline">轮廓</Button>
+<Button variant="ghost">幽灵</Button>
+<Button variant="destructive">危险</Button>
+<Button variant="link">链接</Button>
+
+<Button size="sm">小按钮</Button>
+<Button size="default">默认大小</Button>
+<Button size="lg">大按钮</Button>
+<Button size="icon"><IconPlus /></Button>
+```
+
+### Dialog 对话框
+
+```svelte
+<script lang="ts">
+  import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "$lib/components/ui/dialog";
+  import { Button } from "$lib/components/ui/button";
+</script>
+
+<Dialog>
+  <DialogTrigger asChild let:builder>
+    <Button builders={[builder]}>打开对话框</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>确认操作</DialogTitle>
+      <DialogDescription>这是对话框的描述内容</DialogDescription>
+    </DialogHeader>
+    <div class="py-4">
+      <!-- 对话框内容 -->
+    </div>
+    <DialogFooter>
+      <Button variant="outline">取消</Button>
+      <Button>确认</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+### Tabs 标签页
+
+```svelte
+<script lang="ts">
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "$lib/components/ui/tabs";
+</script>
+
+<Tabs value="stake" class="w-full">
+  <TabsList class="grid w-full grid-cols-2">
+    <TabsTrigger value="stake">质押</TabsTrigger>
+    <TabsTrigger value="withdraw">提取</TabsTrigger>
+  </TabsList>
+  <TabsContent value="stake">
+    <!-- 质押内容 -->
+  </TabsContent>
+  <TabsContent value="withdraw">
+    <!-- 提取内容 -->
+  </TabsContent>
+</Tabs>
+```
+
+### Alert 警告提示
+
+```svelte
+<script lang="ts">
+  import { Alert, AlertDescription, AlertTitle } from "$lib/components/ui/alert";
+</script>
+
+<Alert>
+  <AlertTitle>提示</AlertTitle>
+  <AlertDescription>这是一条提示信息</AlertDescription>
+</Alert>
+
+<Alert variant="destructive">
+  <AlertTitle>错误</AlertTitle>
+  <AlertDescription>操作失败，请重试</AlertDescription>
+</Alert>
+```
+
+### Progress 进度条
+
+```svelte
+<script lang="ts">
+  import { Progress } from "$lib/components/ui/progress";
+  
+  let progress = $state(60);
+</script>
+
+<Progress value={progress} max={100} />
+```
+
+### Switch 开关
+
+```svelte
+<script lang="ts">
+  import { Switch } from "$lib/components/ui/switch";
+  import { Label } from "$lib/components/ui/label";
+  
+  let enabled = $state(false);
+</script>
+
+<div class="flex items-center space-x-2">
+  <Switch bind:checked={enabled} id="auto-reinvest" />
+  <Label for="auto-reinvest">自动复投</Label>
+</div>
+```
+
+## Svelte 5 Runes 语法
+
+### $state - 响应式状态
+
+```svelte
+<script lang="ts">
+  let count = $state(0);
+  let user = $state<{ name: string; email: string } | null>(null);
+  
+  function increment() {
+    count++;
+  }
+</script>
+
+<button onclick={increment}>{count}</button>
+```
+
+### $derived - 派生状态
+
+```svelte
+<script lang="ts">
+  let items = $state<string[]>([]);
+  let count = $derived(items.length);
+  let hasItems = $derived(items.length > 0);
+</script>
+```
+
+### $effect - 副作用
+
+```svelte
+<script lang="ts">
+  let value = $state('');
+  
+  $effect(() => {
+    console.log('Value changed:', value);
+    // 清理函数（可选）
+    return () => {
+      console.log('Cleanup');
+    };
+  });
+</script>
+```
+
+### $props - 组件属性
+
+```svelte
+<script lang="ts">
+  interface Props {
+    title: string;
+    count?: number;
+    onUpdate?: (value: number) => void;
+  }
+  
+  let { title, count = 0, onUpdate }: Props = $props();
+</script>
+```
+
+## 样式规范
+
+### cn() 工具函数
+
+使用 `cn()` 合并 className，支持条件样式：
+
+```svelte
+<script lang="ts">
+  import { cn } from "$lib/utils/cn";
+  
+  let { class: className, isActive = false }: { class?: string; isActive?: boolean } = $props();
+</script>
+
+<div class={cn(
+  "base-class p-4 rounded-lg",
+  isActive && "bg-primary text-primary-foreground",
+  className
+)}>
+  内容
+</div>
+```
+
+### LUKE 主题色
+
+项目定义了 LUKE 协议专用主题色：
+
+```css
+/* 主色调 - 橙色系 */
+--luke-primary: #F5A623;
+--luke-secondary: #FF8C00;
+--luke-accent: #FFD700;
+
+/* 背景色 - 深色系 */
+--luke-dark: #0a0a0a;
+--luke-card: #1a1a1a;
+--luke-border: #2a2a2a;
+
+/* 语义色 */
+--luke-success: #22c55e;
+--luke-error: #ef4444;
+--luke-warning: #f59e0b;
+```
+
+### 使用 LUKE 样式类
+
+```svelte
+<!-- LUKE 风格按钮 -->
+<button class="luke-btn luke-btn-primary">主要按钮</button>
+<button class="luke-btn luke-btn-secondary">次要按钮</button>
+<button class="luke-btn luke-btn-outline">轮廓按钮</button>
+
+<!-- LUKE 卡片 -->
+<div class="luke-card">
+  <div class="luke-stat">
+    <span class="luke-stat-label">标签</span>
+    <span class="luke-stat-value-primary">$1,234.56</span>
+  </div>
+</div>
+
+<!-- LUKE 输入框 -->
+<input class="luke-input" placeholder="输入内容" />
+
+<!-- LUKE 标签页 -->
+<div class="luke-tabs">
+  <button class="luke-tab luke-tab-active">Tab 1</button>
+  <button class="luke-tab">Tab 2</button>
+</div>
+```
+
+## Web3 合约交互
+
+### 读取合约
+
+```svelte
+<script lang="ts">
+  import { createScaffoldReadContractStore } from '$lib/stores/scaffoldReadContract';
+  
+  const balanceStore = createScaffoldReadContractStore({
+    contractName: "LukeMain",
+    functionName: "balanceOf",
+    args: [address],
+    watch: true
+  });
+  
+  // 获取数据
+  const balance = $derived($balanceStore?.data ?? 0n);
+</script>
+
+{#if $balanceStore?.isLoading}
+  <Skeleton class="h-6 w-24" />
+{:else}
+  <span>{formatEther(balance)}</span>
+{/if}
+```
+
+### 写入合约
+
+```svelte
+<script lang="ts">
+  import { createScaffoldWriteContractStore } from '$lib/stores/scaffoldWriteContract';
+  import { parseEther } from 'viem';
+  
+  const writeStore = createScaffoldWriteContractStore({
+    contractName: "LukeMain"
+  });
+  
+  async function deposit() {
+    await writeStore.writeContractAsync({
+      functionName: "deposit",
+      args: [0, parseEther("100")]
+    });
+  }
+</script>
+
+<Button 
+  onclick={deposit} 
+  disabled={$writeStore.isMining}
+>
+  {$writeStore.isMining ? "处理中..." : "质押"}
+</Button>
+```
+
+### 监听事件
+
+```svelte
+<script lang="ts">
+  import { createScaffoldEventHistoryStore } from '$lib/stores/scaffoldEventHistory';
+  
+  const eventStore = createScaffoldEventHistoryStore({
+    contractName: "LukeMain",
+    eventName: "Actions",
+    watch: true
+  });
+</script>
+
+{#each $eventStore.data ?? [] as event}
+  <div>{event.args.amount}</div>
+{/each}
+```
+
+## 页面布局规范
+
+### LUKE 页面容器
+
+```svelte
+<div class="luke-page-container">
+  <!-- 页面标题 -->
+  <h1 class="text-xl font-bold text-luke-primary">页面标题</h1>
+  
+  <!-- 统计卡片 -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-title">标题</div>
+      <div class="stat-card-value-primary">$1,234</div>
+    </div>
+    <!-- 更多卡片... -->
+  </div>
+  
+  <!-- 主要内容 -->
+  <Card>
+    <CardContent class="p-4">
+      <!-- 内容 -->
+    </CardContent>
+  </Card>
+</div>
+```
+
+## 常用组件模板
+
+### 加载状态
+
+```svelte
+{#if isLoading}
+  <div class="flex items-center justify-center p-8">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+{:else}
+  <!-- 内容 -->
+{/if}
+```
+
+### 表单输入组
+
+```svelte
+<div class="space-y-2">
+  <Label for="amount">金额</Label>
+  <div class="flex gap-2">
+    <Input 
+      id="amount" 
+      type="number" 
+      bind:value={amount}
+      placeholder="输入金额"
+    />
+    <Button variant="outline" onclick={() => amount = maxAmount}>
+      MAX
+    </Button>
+  </div>
+  <p class="text-sm text-muted-foreground">
+    可用余额: {formatEther(balance)} USDT
+  </p>
+</div>
+```
+
+### 信息行
+
+```svelte
+<div class="luke-info-row">
+  <span class="luke-info-label">手续费</span>
+  <span class="luke-info-value">0.1%</span>
+</div>
+```
+
+## 开发命令
+
+```bash
+# 启动开发服务器
+bun dev
+
+# 构建生产版本
+bun build
+
+# 类型检查
+bun check
+
+# 添加 shadcn 组件
+bunx shadcn-svelte@next add <component>
+```
+
+## 最佳实践
+
+1. **优先使用 shadcn-svelte 组件** - 替代自定义 CSS 类
+2. **使用 $state/$derived** - 替代 let 声明响应式变量
+3. **使用 cn() 合并样式** - 条件样式和类合并
+4. **组件化开发** - 将复杂 UI 拆分为小组件
+5. **类型安全** - 为 props 和 state 定义 TypeScript 类型
+6. **响应式设计** - 使用 Tailwind 响应式前缀 (sm:, md:, lg:)

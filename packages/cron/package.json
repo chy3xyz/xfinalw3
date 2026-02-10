@@ -1,0 +1,22 @@
+{
+  "name": "@w3s/cron",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "viem": "^2.34.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/node-cron": "^3.0.11",
+    "typescript": "^5.0.0",
+    "node-cron": "^3.0.3"
+  }
+}
+

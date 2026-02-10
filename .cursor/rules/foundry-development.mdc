@@ -1,0 +1,349 @@
+---
+description: Foundry 和 Solidity 合约开发规范和最佳实践
+globs: packages/foundry/**/*.sol
+alwaysApply: false
+---
+
+# Foundry 合约开发规范
+
+## 代码风格
+
+### 格式化配置
+- 遵循 `foundry.toml` 中的格式化设置：
+  - 行长度：120 字符
+  - Tab 宽度：4 空格
+  - 引号风格：双引号
+  - 整数类型：long（uint256 而非 uint）
+
+### 命名规范
+
+```solidity
+// ✅ GOOD - 接口以 I 开头
+interface ICounter {
+    function increment() external;
+    function getCount() external view returns (uint256);
+}
+
+// ✅ GOOD - 私有/内部变量和函数以下划线开头
+contract Counter {
+    uint256 private _count;
+    uint256 internal _internalVar;
+    
+    function _internalFunction() internal { }
+    function _privateFunction() private { }
+}
+
+// ✅ GOOD - 状态变量应该是 private
+contract Example {
+    uint256 private _totalSupply;  // private
+    mapping(address => uint256) private _balances;  // private
+}
+```
+
+### 许可证标识
+所有合约文件必须以 SPDX 许可证标识开头：
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.22;
+```
+
+## 安全最佳实践
+
+### 1. 重入攻击防护
+
+```solidity
+// ✅ GOOD - 使用 ReentrancyGuard
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+contract ExampleContract is ReentrancyGuard {
+    function withdraw() external nonReentrant {
+        // 遵循 CEI 模式：Checks-Effects-Interactions
+        require(balance > 0, "No balance");
+        uint256 amount = balance;
+        balance = 0;  // Effects first
+        payable(msg.sender).transfer(amount);  // Interactions last
+    }
+}
+```
+
+### 2. 外部调用安全性
+
+```solidity
+// ✅ GOOD - 使用 SafeERC20 进行代币转账
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+using SafeERC20 for IERC20;
+
+contract Example {
+    IERC20 public token;
+    
+    function transferTokens(address to, uint256 amount) external {
+        token.safeTransfer(to, amount);  // 使用 safeTransfer
+    }
+}
+
+// ❌ BAD - 直接使用 transfer
+token.transfer(to, amount);  // 可能失败但不 revert
+```
+
+### 3. 访问控制
+
+```solidity
+// ✅ GOOD - 使用 AccessControl
+import "@openzeppelin/contracts/access/AccessControl.sol";
+
+contract ExampleContract is AccessControl {
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
+    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
+    
+    function upgrade() external onlyRole(UPGRADER_ROLE) {
+        // 升级逻辑
+    }
+}
+```
+
+### 4. 输入验证
+
+```solidity
+// ✅ GOOD - 验证输入参数
+function deposit(uint256 amount) external {
+    require(amount > 0, "Amount must be greater than 0");
+    require(amount <= maxDeposit, "Exceeds maximum deposit");
+    require(msg.sender != address(0), "Invalid address");
+    
+    // 业务逻辑
+}
+```
+
+## 合约结构
+
+### 导入顺序
+1. SPDX 许可证标识
+2. pragma 版本
+3. 接口导入（./interfaces/）
+4. 库导入（./libraries/）
+5. OpenZeppelin 导入
+6. 外部库导入
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.22;
+
+import "./interfaces/ICounter.sol";
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+```
+
+### 合约组织
+```solidity
+contract Example {
+    // 1. 常量
+    bytes32 public constant ROLE = keccak256("ROLE");
+    
+    // 2. 状态变量（private）
+    uint256 private _totalSupply;
+    mapping(address => uint256) private _balances;
+    
+    // 3. 事件
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    
+    // 4. 修饰符
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+    
+    // 5. 构造函数
+    constructor() {
+        // 初始化
+    }
+    
+    // 6. 外部函数
+    function deposit() external { }
+    
+    // 7. 公共函数
+    function balanceOf(address account) public view returns (uint256) { }
+    
+    // 8. 内部函数
+    function _internalFunction() internal { }
+    
+    // 9. 私有函数
+    function _privateFunction() private { }
+}
+```
+
+## 事件规范
+
+### 事件命名
+- 使用过去时态（如 `TokensBurned`, `Transfer`）
+- 遵循 ERC 标准的事件命名（如 ERC20 使用现在时）
+
+```solidity
+// ✅ GOOD - 过去时态
+event TokensBurned(address indexed account, uint256 amount);
+event UserRegistered(address indexed user, address indexed referrer);
+
+// ✅ GOOD - ERC 标准（现在时）
+event Transfer(address indexed from, address indexed to, uint256 value);
+```
+
+### 事件位置
+事件应在状态变更后立即发出：
+
+```solidity
+function _burn(address account, uint256 amount) internal {
+    _balances[account] -= amount;
+    emit TokensBurned(account, amount);  // 状态变更后立即发出
+}
+```
+
+## 可升级合约
+
+### UUPS 模式
+```solidity
+// ✅ GOOD - UUPS 可升级合约
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+
+contract ExampleUpgradeable is UUPSUpgradeable, Initializable, AccessControl {
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
+    
+    function _authorizeUpgrade(address newImplementation) 
+        internal 
+        override 
+        onlyRole(UPGRADER_ROLE) 
+    {
+        // 授权升级逻辑
+    }
+}
+```
+
+## 测试规范
+
+### 测试文件结构
+- 测试文件位于 `packages/foundry/test/`
+- 集成测试放在 `test/integration/`
+- 测试辅助函数放在 `test/helpers/`
+
+### 测试命名
+```solidity
+// ✅ GOOD - 描述性测试名称
+contract CounterTest is Test {
+    function test_Increment_ShouldIncreaseCount() public {
+        // 测试逻辑
+    }
+    
+    function test_Increment_ShouldRevertWhenOverflow() public {
+        // 测试逻辑
+    }
+}
+```
+
+### 测试覆盖
+- 所有公共函数必须有测试
+- 边界条件和错误情况必须测试
+- 集成测试覆盖主要业务流程
+
+## 部署脚本
+
+### 脚本位置
+- 部署脚本位于 `packages/foundry/script/`
+- 本地部署：`DeployLocal.s.sol`
+- 主网部署：`Deploy.s.sol`
+
+### 脚本结构
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.22;
+
+import {Script} from "forge-std/Script.sol";
+import {Counter} from "../contracts/Counter.sol";
+
+contract DeployLocal is Script {
+    function run() external {
+        vm.startBroadcast();
+        
+        // 部署逻辑
+        Counter counter = new Counter();
+        
+        vm.stopBroadcast();
+    }
+}
+```
+
+## 代码生成
+
+### TypeScript ABI 生成
+- 运行 `bun deploy` 后自动生成
+- 生成文件：`packages/sveltekit/src/lib/contracts/deployedContracts.ts`
+- **重要**：只生成 SvelteKit 版本，不生成 Next.js 版本
+
+### 生成脚本
+- `packages/foundry/scripts-js/generateTsAbis.js` - 生成 TypeScript 合约定义
+- `packages/foundry/scripts-js/generateKeystore.js` - 生成密钥库
+
+## 常见错误避免
+
+### ❌ 避免的错误
+
+1. **直接使用 transfer()**
+   ```solidity
+   // ❌ BAD
+   token.transfer(to, amount);
+   
+   // ✅ GOOD
+   token.safeTransfer(to, amount);
+   ```
+
+2. **缺少重入保护**
+   ```solidity
+   // ❌ BAD
+   function withdraw() external {
+       payable(msg.sender).transfer(amount);
+       balance = 0;
+   }
+   
+   // ✅ GOOD
+   function withdraw() external nonReentrant {
+       balance = 0;
+       payable(msg.sender).transfer(amount);
+   }
+   ```
+
+3. **状态变量未设为 private**
+   ```solidity
+   // ❌ BAD
+   uint256 public totalSupply;
+   
+   // ✅ GOOD
+   uint256 private _totalSupply;
+   ```
+
+4. **缺少输入验证**
+   ```solidity
+   // ❌ BAD
+   function deposit(uint256 amount) external {
+       balance += amount;
+   }
+   
+   // ✅ GOOD
+   function deposit(uint256 amount) external {
+       require(amount > 0, "Amount must be greater than 0");
+       balance += amount;
+   }
+   ```
+
+## 优化建议
+
+1. **使用库减少合约大小**
+   - 复杂逻辑提取到库中
+
+2. **合理使用存储**
+   - 将相关数据打包到结构体中
+   - 使用 `uint128` 而非 `uint256`（如果值范围允许）
+
+3. **Gas 优化**
+   - 使用 `unchecked` 块处理不会溢出的计算
+   - 缓存存储变量到内存

@@ -1,0 +1,24 @@
+{
+  "name": "@w3s/indexer",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ponder dev",
+    "start": "ponder start",
+    "build": "ponder build",
+    "codegen": "ponder codegen",
+    "db": "ponder db",
+    "serve": "ponder serve"
+  },
+  "dependencies": {
+    "hono": "^4.7.12",
+    "ponder": "^0.15.13",
+    "viem": "^2.34.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+
