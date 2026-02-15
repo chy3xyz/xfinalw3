@@ -4,10 +4,10 @@
 	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
-		"dev": "bun scripts/get-local-ip.js && vite dev",
-		"build:app:css": "bunx postcss-cli src/app.css -o static/app.css",
-		"build:css": "bun run build:app:css",
-		"build": "bun run build:css && vite build",
+		"dev": "node scripts/get-local-ip.js && vite dev",
+		"build:app:css": "postcss src/app.css -o static/app.css",
+		"build:css": "pnpm run build:app:css",
+		"build": "pnpm run build:css && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -57,6 +57,5 @@
 		"tailwindcss": "^4.1.3",
 		"typescript": "^5.9.3",
 		"vite": "^7.2.2"
-	},
-	"packageManager": "bun@latest"
+	}
 }

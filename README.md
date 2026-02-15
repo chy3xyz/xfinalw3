@@ -12,8 +12,8 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 - **Smart Contracts**: Foundry (Solidity)
 - **Web3**: Wagmi, Viem, Reown AppKit
 - **Indexer**: Ponder.sh
-- **Cron**: bun crom
-- **Package Manager**: Bun
+- **Cron**: bun cron
+- **Package Manager**: Bun (recommended) or pnpm
 
 ## Features
 
@@ -30,7 +30,7 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 ### Prerequisites
 
 - Node.js >= 20.18.3
-- [Bun](https://bun.sh) (package manager)
+- Package Manager: [Bun](https://bun.sh) (recommended) or [pnpm](https://pnpm.io/)
 - [Foundry](https://book.getfoundry.sh/getting-started/installation) (forge, anvil)
 - Git
 
@@ -41,8 +41,10 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 git clone <repository-url>
 cd xfinalw3
 
-# Install dependencies
+# Install dependencies (choose one)
 bun install
+# or
+pnpm install
 ```
 
 ### Development Workflow
