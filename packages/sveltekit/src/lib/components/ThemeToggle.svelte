@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { theme } from '$lib/stores/theme.js';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { Button } from '$lib/components/ui/button';
 
   let mounted = false;

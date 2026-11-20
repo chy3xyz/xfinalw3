@@ -2,7 +2,7 @@
 // 注意：由于静态网站无法使用服务器端加载，这里改为客户端加载
 import type { PageLoad } from './$types';
 import type { Address } from 'viem';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 // 客户端加载函数
 export const load: PageLoad = async ({ params, fetch }) => {

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { QueryClient } from '@tanstack/svelte-query';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import Header from '$lib/components/Header.svelte';
   import BottomNav from '$lib/components/BottomNav.svelte';
   import Toast from '$lib/components/Toast.svelte';
@@ -11,10 +11,17 @@
   import ProvidersWrapper from '$lib/components/ProvidersWrapper.svelte';
   import '../app.css';
 
+  let { children } = $props();
+
   // 检查是否是低配版本路由
-  $: isLowVersionRoute = isLowRoute($page.url.pathname);
+  const isLowVersionRoute = $derived(isLowRoute(page.url.pathname));
   // debug、blockexplorer 页面不显示底部导航
-  $: hideFooter = $page.url.pathname === '/debug' || $page.url.pathname.startsWith('/debug/') || $page.url.pathname === '/blockexplorer' || $page.url.pathname.startsWith('/blockexplorer/');
+  const hideFooter = $derived(
+    page.url.pathname === '/debug' ||
+      page.url.pathname.startsWith('/debug/') ||
+      page.url.pathname === '/blockexplorer' ||
+      page.url.pathname.startsWith('/blockexplorer/')
+  );
 
   onMount(async () => {
     if (!browser) return;
@@ -50,14 +57,14 @@
 <ProvidersWrapper>
   <div class="luke-app-wrapper text-white" data-theme="dark">
     {#if isLowVersionRoute}
-      <slot />
+      {@render children?.()}
     {:else}
       <div class="background-container">
         <div class="content-wrapper">
           <Header />
           
           <main class="relative flex flex-col flex-1 text-foreground min-h-0">
-            <slot />
+            {@render children?.()}
           </main>
 
           {#if !hideFooter}

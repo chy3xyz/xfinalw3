@@ -8,7 +8,7 @@ import { notification } from "./notification.js";
 import type { ContractName } from "./contract.js";
 import { contracts } from "./contract.js";
 import { wagmiContextStore } from "../contexts/wagmi.js";
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 
 // 合约名称类型
 type MiningContractName = ContractName;

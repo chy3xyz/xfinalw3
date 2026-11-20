@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { createFetchBlocksStore } from '$lib/stores/fetchBlocks.js';
   import { useTargetNetwork } from '$lib/stores/targetNetwork.js';
   import { hardhat } from 'viem/chains';

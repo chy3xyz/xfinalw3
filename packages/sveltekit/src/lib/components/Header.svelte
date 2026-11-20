@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
-  import { page } from '$app/stores';
+  import { browser } from '$app/env';
+  import { page } from '$app/state';
   import WalletConnectButton from './WalletConnectButton.svelte';
   import FaucetButton from './FaucetButton.svelte';
   import LanguageToggle from './LanguageToggle.svelte';
@@ -15,8 +15,8 @@
     import('$lib/appkit');
   }
 
-  $: currentPath = $page.url.pathname;
-  let mobileMenuOpen = false;
+  const currentPath = $derived(page.url.pathname);
+  let mobileMenuOpen = $state(false);
 
   function toggleMobileMenu() {
     mobileMenuOpen = !mobileMenuOpen;

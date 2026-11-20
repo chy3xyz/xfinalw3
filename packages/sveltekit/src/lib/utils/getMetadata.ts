@@ -1,12 +1,13 @@
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
+import { PUBLIC_APP_URL } from "$app/env/public";
 
 // For SvelteKit, metadata is handled differently than Next.js
 // This is a utility function that can be used in +page.ts or +layout.ts files
 // to set page metadata using SvelteKit's metadata API
 
-const baseUrl = browser
-  ? window.location.origin
-  : process.env.PUBLIC_APP_URL || "http://localhost:5173";
+// Resolved lazily: dynamic public env is populated at server start, not at module eval.
+const getBaseUrl = () =>
+  browser ? window.location.origin : PUBLIC_APP_URL || "http://localhost:5173";
 
 const titleTemplate = "%s | W3Final Scaffold 2";
 
@@ -21,7 +22,7 @@ export const getMetadata = ({
   description,
   imageRelativePath = "/thumbnail.jpg",
 }: MetadataOptions) => {
-  const imageUrl = `${baseUrl}${imageRelativePath}`;
+  const imageUrl = `${getBaseUrl()}${imageRelativePath}`;
 
   return {
     title: titleTemplate.replace("%s", title),

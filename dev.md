@@ -19,10 +19,7 @@ This document provides a comprehensive guide for developing with xfinalw3 framew
 Ensure you have the following installed:
 
 ```bash
-# Check Node.js version (>= 20.18.3)
-node --version
-
-# Check Bun version
+# Check Bun version (>= 1.4.0)
 bun --version
 
 # Check Foundry
@@ -74,11 +71,11 @@ bun foundry:clean
 # Start development server
 bun start
 
-# Build for production
-cd packages/sveltekit && bun run build
+# Build for production (@sveltejs/adapter-bun)
+bun run build
 
-# Preview production build
-cd packages/sveltekit && bun run preview
+# Run production server (Bun)
+bun start:prod
 
 # Type check
 cd packages/sveltekit && bun run check
@@ -278,10 +275,10 @@ Located in `packages/foundry/scripts-js/`:
 ```bash
 # Generate TypeScript definitions
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 
 # Generate keystore
-node scripts-js/generateKeystore.js
+bun scripts-js/generateKeystore.js
 ```
 
 ### Deployment Scripts
@@ -342,7 +339,7 @@ contract DeployScript is ScaffoldETHDeploy {
 }
 ```
 
-After deployment, run `node scripts-js/generateTsAbis.js` to generate TypeScript definitions for the frontend.
+After deployment, run `bun scripts-js/generateTsAbis.js` to generate TypeScript definitions for the frontend.
 
 ## Development Rules
 
@@ -413,7 +410,7 @@ bun compile
 ```bash
 # Regenerate contract types
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 
 # Restart dev server
 bun start
@@ -437,7 +434,7 @@ bun chain
 ```bash
 # Regenerate types
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 
 # Check TypeScript
 cd packages/sveltekit

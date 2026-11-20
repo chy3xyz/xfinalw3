@@ -1,4 +1,2 @@
-// 根布局配置 - 禁用SSR，仅使用客户端渲染
-export const ssr = false;
+// SSR enabled (adapter-bun serves SSR). Browser-only logic stays behind `browser` guards.
 export const prerender = false;
-

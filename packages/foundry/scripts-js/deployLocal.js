@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 /**
  * Local deployment script for frontend testing
@@ -12,7 +12,7 @@
  * Usage:
  * bun run deploy:local
  * or
- * node packages/foundry/scripts-js/deployLocal.js
+ * bun packages/foundry/scripts-js/deployLocal.js
  */
 
 import { execSync } from "child_process";
@@ -126,7 +126,7 @@ function generateAbis() {
   console.log("\n📝 Generating contract ABIs...");
   try {
     const generateAbisScript = path.join(__dirname, "generateTsAbis.js");
-    execSync(`node ${generateAbisScript}`, {
+    execSync(`bun ${generateAbisScript}`, {
       cwd: FOUNDRY_DIR,
       stdio: "inherit",
     });

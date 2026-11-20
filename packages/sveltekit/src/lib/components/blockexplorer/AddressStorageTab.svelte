@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import type { Address } from 'viem';
   import { getPublicClient } from '@wagmi/core';
   import { toHex } from 'viem';

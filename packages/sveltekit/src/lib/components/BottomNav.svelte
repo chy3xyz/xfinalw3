@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { locale, t } from '$lib/i18n/index.js';
   import { Button } from '$lib/components/ui/button';
   import { cn } from '$lib/utils/cn.js';
@@ -27,7 +27,7 @@
 <nav class="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border z-50">
   <div class="max-w-lg mx-auto flex justify-around items-center h-[72px] px-2">
     {#each navItems as item}
-      {@const active = isActive(item.path, $page.url.pathname)}
+      {@const active = isActive(item.path, page.url.pathname)}
       <Button
         href={item.path}
         variant="ghost"

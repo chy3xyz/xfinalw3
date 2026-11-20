@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { formatEther } from 'viem';
   import type { Transaction, TransactionReceipt, Log } from 'viem';
   import { getTestClient } from '$lib/stores/fetchBlocks.js';

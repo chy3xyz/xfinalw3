@@ -3,7 +3,7 @@
   import { WagmiProvider } from 'wagmi';
   import type { Config } from 'wagmi';
   import type { QueryClient } from '@tanstack/svelte-query';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { getWagmiContext } from '$lib/contexts/wagmi.js';
 
   // 从 context 获取配置，而不是从 props

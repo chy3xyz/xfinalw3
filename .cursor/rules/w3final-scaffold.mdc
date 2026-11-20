@@ -4,14 +4,14 @@ globs:
 alwaysApply: true
 ---
 
-This codebase contains xfinalw3, a modern Web3 development framework for building dApps on Ethereum. Its tech stack is SvelteKit, Wagmi, Viem and TypeScript. Supports Ponder, cron, bun Foundry.
+This codebase contains xfinalw3, a modern Web3 development framework for building dApps on Ethereum. Its tech stack is SvelteKit (adapter-bun), Wagmi, Viem and TypeScript. Supports Ponder, cron, and Foundry — all driven by Bun.
 
-It's a yarn monorepo that contains following packages:
+It's a Bun monorepo that contains following packages:
 
 - FOUNDRY (`packages/foundry`): The solidity framework to write, test and deploy EVM Smart Contracts.
-- SvelteKit (`packages/sveltekit`): The UI framework extended with utilities to make interacting with Smart Contracts easy (using SvelteKit with Svelte 5).
-- Indexer (`packages/indexer`): The Indexer with ponder.sh
-- Cron(`packages/crom`): bun crom
+- SvelteKit (`packages/sveltekit`): The UI framework extended with utilities to make interacting with Smart Contracts easy (using SvelteKit with Svelte 5 + `@sveltejs/adapter-bun`).
+- Indexer (`packages/indexer`): The Indexer with ponder.sh, run via Bun (`bun indexer`).
+- Cron (`packages/cron`): Cron jobs run via Bun (`bun cron`).
 
 
 The usual dev flow is:
@@ -28,9 +28,12 @@ The usual dev flow is:
 - Iterate until you get the functionality you want in your contract
 - Write tests for the contract in `packages/foundry/test`
 - Create your custom UI using all the W3S components, stores, and utilities.
-- Deploy your Smart Contrac to a live network
-- Deploy your UI (`bun vercel` or `bun ipfs`)
+- Deploy your Smart Contract to a live network
+- Build and run the dApp for production with Bun + adapter-bun:
+  - `bun run build`
+  - `bun start:prod`
   - You can tweak which network the frontend is pointing (and some other configurations) in `scaffold.config.ts`
+- Do not treat Node/pnpm as prerequisites; package manager and runtime for the monorepo are Bun only.
 
 ## Smart Contract UI interactions guidelines
 xfinalw3 provides a set of Svelte stores that facilitates contract interactions from the UI. It reads the contract data from `deployedContracts.ts` and `externalContracts.ts`, located in `packages/sveltekit/src/lib/contracts`.

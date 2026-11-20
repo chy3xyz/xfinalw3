@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * 获取本地 IP 地址
  * 用于跨设备访问开发服务器

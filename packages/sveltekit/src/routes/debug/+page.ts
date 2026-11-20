@@ -1,6 +1,2 @@
-// Disable SSR for debug page since it uses browser-only APIs
-export const ssr = false;
-
-// Also disable prerendering to avoid any module-level code execution
+// SSR is on; wallet/wagmi code is guarded by `browser`. Dynamic page, no prerender.
 export const prerender = false;
-

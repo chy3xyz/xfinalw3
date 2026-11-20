@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { getTargetNetworks } from '$lib/utils/networks.js';
   import { getNetworkColor } from '$lib/stores/networkColor.js';
   import { switchChain, getAccount, watchAccount, getChainId, watchChainId } from '@wagmi/core';

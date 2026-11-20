@@ -11,9 +11,10 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 - **Frontend**: SvelteKit + Svelte 5, TypeScript, TailwindCSS
 - **Smart Contracts**: Foundry (Solidity)
 - **Web3**: Wagmi, Viem, Reown AppKit
-- **Indexer**: Ponder.sh
-- **Cron**: bun cron
-- **Package Manager**: Bun (recommended) or pnpm
+- **Indexer**: Ponder.sh (Bun)
+- **Cron**: Bun
+- **Package Manager**: Bun
+- **Production**: `@sveltejs/adapter-bun`
 
 ## Features
 
@@ -29,8 +30,7 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 
 ### Prerequisites
 
-- Node.js >= 20.18.3
-- Package Manager: [Bun](https://bun.sh) (recommended) or [pnpm](https://pnpm.io/)
+- [Bun](https://bun.sh) >= 1.4.0
 - [Foundry](https://book.getfoundry.sh/getting-started/installation) (forge, anvil)
 - Git
 
@@ -41,10 +41,8 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 git clone <repository-url>
 cd xfinalw3
 
-# Install dependencies (choose one)
+# Install dependencies
 bun install
-# or
-pnpm install
 ```
 
 ### Development Workflow
@@ -100,13 +98,13 @@ xfinalw3/
 ### Frontend
 
 - `bun start` - Start development server
-- `bun sveltekit:build` - Build for production
-- `bun sveltekit:preview` - Preview production build
+- `bun run build` - Build for production (`@sveltejs/adapter-bun`)
+- `bun start:prod` - Run production server (Bun)
 
 ### Other
 
-- `bun indexer` - Start Ponder indexer
-- `bun cron` - Start cron jobs
+- `bun indexer` - Start Ponder indexer (Bun)
+- `bun cron` - Start cron jobs (Bun)
 
 ## Documentation
 

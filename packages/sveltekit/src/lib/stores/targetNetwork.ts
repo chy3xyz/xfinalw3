@@ -1,5 +1,5 @@
 import { writable, type Readable } from 'svelte/store';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import scaffoldConfig from 'scaffold.config';
 import { NETWORKS_EXTRA_DATA } from '../utils/networks.js';
 

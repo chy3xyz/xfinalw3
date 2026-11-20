@@ -5,16 +5,12 @@
 ## 前置要求
 
 1. **已安装的软件**:
-   - Node.js >= 20.18.3
-   - Bun (包管理器)
+   - Bun >= 1.4.0（包管理器与运行时）
    - Foundry (forge, anvil)
    - Git
 
 2. **环境检查**:
    ```bash
-   # 检查Node.js版本
-   node --version
-   
    # 检查Bun版本
    bun --version
    
@@ -230,7 +226,7 @@ Solidity部署脚本，负责：
 
 ### `scripts-js/deployLocal.js`
 
-Node.js脚本，负责：
+Bun 脚本，负责：
 - 检查并启动本地链
 - 调用Solidity部署脚本
 - 生成前端配置文件

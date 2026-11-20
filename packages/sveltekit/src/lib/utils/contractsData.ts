@@ -1,4 +1,4 @@
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 // Cache for contracts data to avoid re-importing
 let contractsCache: any = null;

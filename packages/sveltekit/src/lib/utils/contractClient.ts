@@ -10,7 +10,7 @@ import type { Config } from "wagmi";
 import { contracts } from "./contract.js";
 import { wagmiContextStore } from "../contexts/wagmi.js";
 import { get } from "svelte/store";
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 
 export interface ContractCallOptions {
   contractName: string;

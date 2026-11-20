@@ -1,7 +1,7 @@
 import { writable, get } from 'svelte/store';
 import { createTestClient, publicActions, walletActions, webSocket, type Block, type TransactionReceipt, type Transaction } from 'viem';
 import { hardhat } from 'viem/chains';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 const BLOCKS_PER_PAGE = 20;
 

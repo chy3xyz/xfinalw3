@@ -15,11 +15,11 @@ bun start
 # 或
 cd packages/sveltekit && bun dev
 
-# 2. 构建生产版本
-cd packages/sveltekit && bun run build
+# 2. 构建生产版本 (@sveltejs/adapter-bun)
+bun run build
 
-# 3. 预览生产构建
-cd packages/sveltekit && bun run preview
+# 3. 运行生产服务 (Bun)
+bun start:prod
 
 # 4. 类型检查
 cd packages/sveltekit && bun run check
@@ -379,25 +379,21 @@ bun run check:watch  # 监视模式
 
 ## 构建和部署
 
+生产路径使用 `@sveltejs/adapter-bun`（非 adapter-static / Vercel / IPFS）。
+
 ### 构建生产版本
 
 ```bash
-cd packages/sveltekit
 bun run build
 ```
 
-构建输出在 `build/` 目录。
+构建输出在 `packages/sveltekit/build/`。
 
-### 预览构建
+### 运行生产服务
 
 ```bash
-cd packages/sveltekit
-bun run preview
+bun start:prod
 ```
-
-### 静态部署
-
-项目支持静态部署（IPFS/Vercel），参考 `DEPLOY_STATIC.md`。
 
 ## 常见任务
 
@@ -418,7 +414,7 @@ bun run preview
 
 ```bash
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 ```
 
 ### 样式开发
@@ -439,7 +435,7 @@ node scripts-js/generateTsAbis.js
 
 1. 检查端口 5173 是否被占用
 2. 确保在项目根目录或 sveltekit 目录运行
-3. 检查 Node.js 版本：`node --version`（需要 >= 20.18.3）
+3. 检查 Bun 版本：`bun --version`（需要 >= 1.4.0）
 
 ### 合约交互失败
 

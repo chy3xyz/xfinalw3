@@ -1,3 +1,2 @@
-// Disable SSR for blockexplorer page since it uses browser-only APIs (WebSocket connections)
-export const ssr = false;
-
+// SSR is on; WebSocket/wagmi code is guarded by `browser`. Dynamic page, no prerender.
+export const prerender = false;

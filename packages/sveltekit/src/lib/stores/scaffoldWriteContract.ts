@@ -12,7 +12,7 @@ import { simulateContractWriteAndNotifyError } from '../utils/contract.js';
 import type { Abi, WriteContractVariables, WriteContractReturnType, WriteContractErrorType } from 'viem';
 import type { Config } from 'wagmi';
 import type { MutateOptions } from '@tanstack/svelte-query';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { wagmiContextStore } from '../contexts/wagmi.js';
 
 type UseScaffoldWriteConfig<TContractName extends ContractName> = {

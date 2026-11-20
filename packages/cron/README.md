@@ -4,7 +4,7 @@
 
 ## 功能特性
 
-- ✅ 基于 `node-cron` 的定时任务调度
+- ✅ 基于 `croner` 的定时任务调度
 - ✅ 使用 `viem` 与智能合约交互
 - ✅ 支持读取和写入合约操作
 - ✅ 环境变量配置
@@ -75,18 +75,20 @@ packages/cron/
 在 `src/index.ts` 中配置 cron 表达式：
 
 ```typescript
+import { schedule } from "./utils/schedule.js";
+
 // 每分钟执行
-cron.schedule("* * * * *", async () => {
+schedule("* * * * *", async () => {
   await contractJob.execute();
 });
 
 // 每5分钟执行
-cron.schedule("*/5 * * * *", async () => {
+schedule("*/5 * * * *", async () => {
   await contractJob.readContractData();
 });
 
 // 每天凌晨2点执行
-cron.schedule("0 2 * * *", async () => {
+schedule("0 2 * * *", async () => {
   await contractJob.dailyTask();
 });
 ```
@@ -145,7 +147,7 @@ async yourCustomMethod() {
 在 `src/index.ts` 中添加新的定时任务：
 
 ```typescript
-cron.schedule("*/10 * * * *", async () => {
+schedule("*/10 * * * *", async () => {
   await contractJob.yourCustomMethod();
 });
 ```
@@ -174,8 +176,8 @@ cron.schedule("*/10 * * * *", async () => {
 ## 示例：检查余额
 
 ```typescript
-// 在定时任务中检查余额
-cron.schedule("*/30 * * * *", async () => {
+// 在定时任务中检查余额（croner via utils/schedule.ts）
+schedule("*/30 * * * *", async () => {
   const balance = await contractJob.getBalance();
   const balanceInEth = Number(balance) / 1e18;
   
@@ -195,7 +197,7 @@ DEBUG=true bun cron
 
 ## 更多信息
 
-- [node-cron 文档](https://github.com/node-cron/node-cron)
+- [croner 文档](https://github.com/Hexagon/croner)
 - [viem 文档](https://viem.sh)
 - [Cron 表达式生成器](https://crontab.guru)
 

@@ -78,7 +78,7 @@ forge script script/DeployLocal.s.sol:DeployLocalScript \
 部署后自动生成，或手动运行：
 ```bash
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 ```
 
 生成文件：
@@ -111,7 +111,7 @@ forge test -vvv
 ```bash
 bun account:generate
 # 或
-cd packages/foundry && node scripts-js/generateKeystore.js
+cd packages/foundry && bun scripts-js/generateKeystore.js
 ```
 
 ### 导入账户
@@ -119,7 +119,7 @@ cd packages/foundry && node scripts-js/generateKeystore.js
 ```bash
 bun account:import
 # 或
-cd packages/foundry && node scripts-js/importAccount.js
+cd packages/foundry && bun scripts-js/importAccount.js
 ```
 
 ### 查看账户私钥
@@ -127,7 +127,7 @@ cd packages/foundry && node scripts-js/importAccount.js
 ```bash
 bun account:reveal-pk
 # 或
-cd packages/foundry && node scripts-js/revealPK.js
+cd packages/foundry && bun scripts-js/revealPK.js
 ```
 
 ## 部署脚本位置
@@ -217,7 +217,7 @@ anvil --host 0.0.0.0 --port 8545
 手动运行生成脚本：
 ```bash
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 ```
 
 ## E2E 测试场景
@@ -226,7 +226,7 @@ node scripts-js/generateTsAbis.js
 
 ```bash
 # 运行所有场景
-cd packages/foundry && node scripts-js/run_all_e2e.js
+cd packages/foundry && bun scripts-js/run_all_e2e.js
 
 # 运行特定场景
 bun e2e:1  # 奖励领取场景

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { writable, get } from 'svelte/store';
   import { createWalletClient, http, parseEther } from 'viem';
   import { hardhat, foundry } from 'viem/chains';

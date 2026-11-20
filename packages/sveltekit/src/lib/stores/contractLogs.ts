@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { getPublicClient } from '@wagmi/core';
 import { useTargetNetwork } from './targetNetwork.js';
 import { wagmiConfig } from '../config/wagmi.js';

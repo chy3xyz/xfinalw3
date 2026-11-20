@@ -1,6 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 import { getPublicClient } from '@wagmi/core';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { useSelectedNetwork } from './selectedNetwork.js';
 import { contracts, type Contract, type ContractName, ContractCodeStatus } from '../utils/contract.js';
 import type { AllowedChainIds } from '../utils/networks.js';

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { get } from 'svelte/store';
   import { readContract } from '@wagmi/core';
   import { createDeployedContractStore } from '$lib/stores/deployedContract.js';

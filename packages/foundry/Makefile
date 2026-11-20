@@ -27,11 +27,11 @@ deploy-and-generate-abis: deploy generate-abis
 
 # Generate TypeScript ABIs
 generate-abis:
-	node scripts-js/generateTsAbis.js
+	bun scripts-js/generateTsAbis.js
 
 # List account
 account:
-	@node scripts-js/checkAccountBalance.js
+	@bun scripts-js/checkAccountBalance.js
 
 # Get address of a keystore
 get-address:

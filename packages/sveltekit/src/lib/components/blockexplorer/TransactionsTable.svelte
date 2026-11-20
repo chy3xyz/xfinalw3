@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { formatEther } from 'viem';
   import { hardhat } from 'viem/chains';
   import { useTargetNetwork } from '$lib/stores/targetNetwork.js';

@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { useInfiniteQuery, useQuery } from '@tanstack/svelte-query';
 import { useBlockNumber, usePublicClient } from 'wagmi';
 import { hardhat } from 'viem/chains';

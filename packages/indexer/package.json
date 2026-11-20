@@ -4,16 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "ponder dev",
-    "start": "ponder start",
-    "build": "ponder build",
-    "codegen": "ponder codegen",
-    "db": "ponder db",
-    "serve": "ponder serve"
+    "dev": "bun --bun ponder dev",
+    "start": "bun --bun ponder start",
+    "build": "bun --bun ponder build",
+    "codegen": "bun --bun ponder codegen",
+    "db": "bun --bun ponder db",
+    "serve": "bun --bun ponder serve"
   },
   "dependencies": {
     "hono": "^4.7.12",
-    "ponder": "^0.15.13",
+    "ponder": "^0.18.9",
     "viem": "^2.34.0"
   },
   "devDependencies": {
@@ -21,4 +21,3 @@
     "typescript": "^5.0.0"
   }
 }
-

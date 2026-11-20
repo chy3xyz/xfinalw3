@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types';
 import type { Address } from 'viem';
 import { readdirSync, readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { foundry } from 'viem/chains';
 import deployedContracts from '$lib/contracts/deployedContracts.js';
 import type { GenericContractsDeclaration } from '$lib/utils/contractTypes.js';
@@ -31,6 +32,21 @@ async function fetchByteCodeAndAssembly(buildInfoDirectory: string, contractPath
   return { bytecode, assembly };
 }
 
+function findBuildInfoDirectory(): string {
+  const rel = join('packages', 'foundry', 'out', 'build-info');
+  if (process.env.FOUNDRY_BUILD_INFO_DIR) return process.env.FOUNDRY_BUILD_INFO_DIR;
+  let dir = dirname(fileURLToPath(import.meta.url));
+  for (let i = 0; i < 12; i++) {
+    const candidate = join(dir, rel);
+    if (existsSync(candidate)) return candidate;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  // fallback (dev / unusual layouts)
+  return join(process.cwd(), rel);
+}
+
 async function getContractData(address: Address): Promise<{ bytecode: string; assembly: string } | null> {
   const contracts = deployedContracts as GenericContractsDeclaration | null;
   const chainId = foundry.id;
@@ -42,13 +58,9 @@ async function getContractData(address: Address): Promise<{ bytecode: string; as
   let contractPath = '';
 
   // Path to foundry build-info directory
-  const buildInfoDirectory = join(
-    process.cwd(),
-    'packages',
-    'foundry',
-    'out',
-    'build-info',
-  );
+  // Resolve from this file (not process.cwd()): packages/sveltekit/src/routes/blockexplorer/address/[address]/ -> monorepo root.
+  // Under adapter-bun the bundled file lives in packages/sveltekit/build/server/..., so also try walking up to find packages/foundry.
+  const buildInfoDirectory = findBuildInfoDirectory();
 
   if (!existsSync(buildInfoDirectory)) {
     console.warn(`Directory ${buildInfoDirectory} not found.`);

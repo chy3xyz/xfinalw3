@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { get } from 'svelte/store';
   import { getAccount } from '@wagmi/core';
   import { wagmiContextStore } from '$lib/contexts/wagmi.js';

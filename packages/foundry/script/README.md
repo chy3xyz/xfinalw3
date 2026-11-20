@@ -153,7 +153,7 @@ After deploying, run:
 
 ```bash
 cd packages/foundry
-node scripts-js/generateTsAbis.js
+bun scripts-js/generateTsAbis.js
 ```
 
 This generates TypeScript contract definitions for the frontend at:

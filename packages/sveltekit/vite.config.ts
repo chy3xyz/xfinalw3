@@ -1,15 +1,23 @@
+import adapter from '@sveltejs/adapter-bun';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-	plugins: [sveltekit()],
-	resolve: {
-		alias: {
-			$lib: fileURLToPath(new URL('./src/lib', import.meta.url)),
-			'scaffold.config': fileURLToPath(new URL('./scaffold.config.ts', import.meta.url)),
-		},
-	},
+	plugins: [
+		sveltekit({
+			preprocess: vitePreprocess(),
+			adapter: adapter({
+				out: 'build',
+			}),
+			// Kit 3 removed the built-in `$lib` alias; keep it (and scaffold.config) via the
+			// deprecated-but-supported `alias` option so imports + generated tsconfig paths still work.
+			alias: {
+				$lib: 'src/lib',
+				'scaffold.config': 'scaffold.config.ts',
+			},
+		}),
+	],
 	server: {
 		host: '0.0.0.0', // 允许通过本地 IP 访问
 		port: 5173,
