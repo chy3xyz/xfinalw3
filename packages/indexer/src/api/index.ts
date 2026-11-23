@@ -1,16 +1,35 @@
 import { db } from "ponder:api"
 import schema from "ponder:schema"
 import { Hono } from "hono"
+import { cors } from "hono/cors"
 import { graphql } from "ponder"
 import { getAddress } from "viem"
+import { mountAdminAuth, requireAdmin } from "./adminAuth"
+import { graphqlGuard } from "./graphqlGuard"
+import { mountRpcProxy } from "./rpcProxy"
 
 const app = new Hono()
 
 /**
- * Keep in sync with `contracts` keys in ponder.config.ts.
- * Empty = scaffold stub (not indexing on-chain data yet).
+ * Keep in sync with indexing sources in ponder.config.ts
+ * (contracts + blocks). Zero = scaffold stub.
  */
-const CONTRACTS_CONFIGURED = 0
+const CONTRACTS_CONFIGURED = 1 // Heartbeat blocks in ponder.config.ts
+
+function resolveCorsOrigin(origin: string): string | null {
+  const whitelist = (process.env.CORS_ORIGINS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+  if (whitelist.length === 0) return "*"
+  return whitelist.includes(origin) ? origin : null
+}
+
+app.use("*", cors({ origin: resolveCorsOrigin, credentials: true }))
+app.use("*", graphqlGuard)
+
+mountAdminAuth(app)
+mountRpcProxy(app)
 
 app.use("/graphql", graphql({ db, schema }))
 
@@ -24,11 +43,16 @@ app.get("/count/:address", async (c) => {
   return c.text("0")
 })
 
+/** Example protected admin read — extend with product routes. */
+app.get("/admin/ping", requireAdmin, (c) => {
+  return c.json({ ok: true, ts: new Date().toISOString() })
+})
+
 /**
  * Honest health — not always ok.
- * No configured contracts → degraded / ready:false (HTTP 503).
+ * `/health` `/ready` `/status` `/metrics` are reserved by Bun-native bponder.
  */
-app.get("/health", async (c) => {
+app.get("/app/ready", async (c) => {
   const dbOk = Boolean(db) && Boolean(schema)
   const ready = CONTRACTS_CONFIGURED > 0 && dbOk
   const status = ready

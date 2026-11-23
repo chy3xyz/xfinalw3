@@ -157,7 +157,7 @@ bun scripts-js/generateTsAbis.js
 ```
 
 This generates TypeScript contract definitions for the frontend at:
-`packages/sveltekit/src/lib/contracts/deployedContracts.ts`
+`packages/solid/src/lib/contracts/deployedContracts.ts`
 
 ## Example: Counter Contract Deployment
 

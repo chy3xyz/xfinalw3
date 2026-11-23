@@ -1,0 +1,19 @@
+{
+  "name": "@w3s/cron",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "croner": "^9.0.0",
+    "viem": "^2.34.0"
+  },
+  "devDependencies": {
+    "bun-types": "^1.4.5",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,727 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Self-hosted webfonts（自托管，不依赖 Google Fonts 运行时）
+   Inter（可变 400–800）+ JetBrains Mono（可变 400–700），latin 子集。
+   等宽字体必须真的加载：所有金额/合约地址/订单号都用 font-mono，
+   字体缺失时各平台回退到 SF Mono / Consolas / Roboto Mono，列宽不一致。
+   ============================================================ */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/fonts/Inter-400800.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/fonts/JetBrainsMono-400700.woff2') format('woff2'); }
+
+/* ============================================================
+   Dark Theme Base
+   ============================================================ */
+html.dark, .dark body {
+  background-color: #08080c;
+  color: #f4f1ea;
+}
+
+body {
+  background-color: #08080c;
+  color: #f4f1ea;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   Surface layers
+   ============================================================ */
+.bg-surface  { background-color: #111118; }
+
+/* ============================================================
+   Glass Card (Dark-first, understated)
+   ============================================================ */
+.glass-card {
+  @apply bg-void-card/90 backdrop-blur-xl border border-void-edge/60 rounded-2xl;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+/* ============================================================
+   Gold Gradient Text
+   ============================================================ */
+.gradient-text {
+  background: linear-gradient(135deg, #e9a23b 0%, #f6c46a 50%, #c9871f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   Floating Capsule Nav
+   ============================================================ */
+.capsule-nav {
+  @apply fixed bottom-0 left-0 right-0 z-40 flex items-stretch px-1 pt-2 pb-3
+    backdrop-blur-xl border-t border-white/10;
+  background: rgba(10, 10, 15, 0.88);
+}
+
+.capsule-nav a {
+  @apply relative flex flex-1 flex-col items-center justify-center gap-[3px] py-1.5 text-[10.5px] transition-colors duration-200 whitespace-nowrap min-w-0;
+  color: #6d6a75;
+}
+
+.capsule-nav a.active {
+  color: #f6c46a;
+  font-weight: 600;
+  background: none;
+  box-shadow: none;
+}
+
+.capsule-nav a.active::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e9a23b;
+}
+
+.capsule-nav a:not(.active) {
+  @apply hover:text-gray-200;
+}
+
+/* ============================================================
+   Gold Button
+   ============================================================ */
+.glow-btn {
+  @apply relative overflow-hidden font-bold rounded-xl
+    transition-all duration-300 active:scale-[0.97];
+  color: #1a1004;
+  background: linear-gradient(180deg, #f4b552, #e2942c);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 24px -8px rgba(233, 162, 59, 0.55);
+}
+
+.glow-btn:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 28px -8px rgba(233, 162, 59, 0.65);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   Skeleton loader
+   ============================================================ */
+.skeleton {
+  @apply rounded-xl;
+  background: linear-gradient(90deg, #1a1a24, #111118, #1a1a24);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ============================================================
+   Bottom safe area
+   ============================================================ */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ============================================================
+   Modal overlay
+   ============================================================ */
+.modal-overlay {
+  @apply fixed inset-0 z-50 flex items-end sm:items-center justify-center;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+}
+
+.modal-sheet {
+  /* max-width is owned by the Modal component's size prop (SIZE_MAX_W);
+     do not re-add a responsive max-width here — it would out-cascade utilities. */
+  @apply bg-void-card w-full sm:rounded-3xl rounded-t-3xl max-h-[90vh] overflow-y-auto;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(26,26,36,0.6);
+}
+
+/* ============================================================
+   Notify progress bar
+   ============================================================ */
+@keyframes notify-progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+.notify-progress {
+  /* 时长由组件透传的 --toast-ms 决定（success 3s / warning 3.5s / error 4s /
+     链上成功 6s）。写死 3s 会让进度条先走完、toast 还挂在屏幕上 —— 视觉说谎。 */
+  animation: notify-progress var(--toast-ms, 3000ms) linear forwards;
+}
+
+/* ============================================================
+   Notify toast
+   ============================================================ */
+.toast {
+  @apply min-w-0 sm:min-w-[280px] max-w-full sm:max-w-[400px]
+         glass-card p-4 flex items-start gap-3;
+}
+.toast.success { @apply border-green-500/40; }
+.toast.error   { @apply border-red-500/40; }
+.toast.warning { @apply border-yellow-500/40; }
+.toast.info    { @apply border-blue-500/40; }
+
+/* ============================================================
+   Keyframes
+   ============================================================ */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================
+   Cold-start splash — gold seam door + stardust inhale
+   Timeline ~3.2s: logo/brand hold → seam widen → doors part → fade
+   ============================================================ */
+.splash-root {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #050508;
+  cursor: pointer;
+  outline: none;
+  animation: splashRootIn 280ms ease-out both;
+}
+
+.splash-root--exit {
+  pointer-events: none;
+  animation: splashRootOut 360ms ease-in forwards;
+}
+
+.splash-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 40%, rgba(245, 158, 11, 0.06), transparent 70%),
+    linear-gradient(180deg, #0c0c12 0%, #08080c 55%, #050508 100%);
+  border-color: rgba(245, 158, 11, 0.12);
+}
+
+.splash-panel--left {
+  left: 0;
+  border-right: 1px solid rgba(245, 158, 11, 0.18);
+  animation: splashDoorLeft 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.splash-panel--right {
+  right: 0;
+  border-left: 1px solid rgba(245, 158, 11, 0.18);
+  animation: splashDoorRight 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.splash-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+  animation: splashSeam 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.splash-seam-core {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(251, 191, 36, 0.15) 12%,
+    #fbbf24 45%,
+    #f59e0b 55%,
+    rgba(251, 191, 36, 0.15) 88%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 12px 2px rgba(245, 158, 11, 0.55),
+    0 0 36px 8px rgba(245, 158, 11, 0.25);
+}
+
+.splash-dust {
+  position: absolute;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: #fbbf24;
+  box-shadow: 0 0 6px 1px rgba(251, 191, 36, 0.8);
+  opacity: 0;
+  --dx: 0px;
+  animation: splashDustInhale 2.4s ease-in forwards;
+}
+
+.splash-dust--1 { top: 18%; --dx: -48px; animation-delay: 0.35s; }
+.splash-dust--2 { top: 32%; --dx: 56px;  animation-delay: 0.55s; }
+.splash-dust--3 { top: 48%; --dx: -72px; animation-delay: 0.45s; }
+.splash-dust--4 { top: 58%; --dx: 64px;  animation-delay: 0.7s; }
+.splash-dust--5 { top: 72%; --dx: -40px; animation-delay: 0.85s; }
+.splash-dust--6 { top: 82%; --dx: 36px;  animation-delay: 0.6s; }
+
+.splash-brand {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 0 1.5rem;
+  animation: splashBrand 3.2s ease forwards;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.splash-brand-logo {
+  width: 5.5rem;
+  height: 5.5rem;
+  object-fit: contain;
+  margin-bottom: 0.85rem;
+  filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.35));
+  animation: splashLogoPulse 3.2s ease forwards;
+}
+
+.splash-brand-title {
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.splash-brand-sub {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: rgba(156, 163, 175, 0.9);
+  letter-spacing: 0.04em;
+}
+
+.splash-skip {
+  position: absolute;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(17, 17, 24, 0.55);
+  color: rgba(156, 163, 175, 0.95);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.splash-skip:hover {
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+@keyframes splashRootIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes splashRootOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes splashDoorLeft {
+  0%, 42% { transform: translateX(0); }
+  82% { transform: translateX(-102%); }
+  100% { transform: translateX(-110%); opacity: 0; }
+}
+
+@keyframes splashDoorRight {
+  0%, 42% { transform: translateX(0); }
+  82% { transform: translateX(102%); }
+  100% { transform: translateX(110%); opacity: 0; }
+}
+
+@keyframes splashSeam {
+  0% { width: 2px; opacity: 0.35; }
+  10% { width: 2px; opacity: 1; }
+  38% { width: 8px; opacity: 1; }
+  55% { width: 22px; opacity: 0.9; }
+  78% { width: 72vw; opacity: 0.25; }
+  100% { width: 100vw; opacity: 0; }
+}
+
+@keyframes splashDustInhale {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), 0) scale(0.6);
+  }
+  18% {
+    opacity: 0.9;
+    transform: translate(calc(-50% + var(--dx)), 0) scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.15);
+  }
+}
+
+@keyframes splashBrand {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes splashLogoPulse {
+  0% { opacity: 0; transform: scale(0.88); }
+  12% { opacity: 1; transform: scale(1); }
+  42% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.splash-root--reduced .splash-panel--left,
+.splash-root--reduced .splash-panel--right,
+.splash-root--reduced .splash-seam,
+.splash-root--reduced .splash-dust,
+.splash-root--reduced .splash-brand,
+.splash-root--reduced .splash-brand-logo {
+  animation: none !important;
+}
+
+.splash-root--reduced .splash-panel {
+  opacity: 0.92;
+}
+
+.splash-root--reduced .splash-seam {
+  width: 3px;
+  opacity: 0.7;
+}
+
+.splash-root--reduced .splash-brand {
+  opacity: 1;
+}
+
+.splash-root--reduced .splash-dust {
+  display: none;
+}
+
+/* ============================================================
+   Announcement ticker —— 首页公告条
+   轨道里放两份完全相同的内容，-50% 位移正好等于一份的宽度，循环无缝。
+   min-width:200% + 每份 flex:1 0 auto：内容少时一份至少铺满视口
+   （否则条目少时右半边会一直是空白）；flex:none 是防止轨道被父级 flex 压缩，
+   少了它轨道会被压到 200% 而内容溢出，-50% 就对不齐了。
+   ============================================================ */
+.ticker-track {
+  display: flex;
+  flex: none;
+  width: max-content;
+  min-width: 200%;
+}
+
+.ticker-run {
+  display: flex;
+  align-items: center;
+  flex: 1 0 auto;
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .notify-progress,
+  .modal-sheet,
+  .splash-panel--left,
+  .splash-panel--right,
+  .splash-seam,
+  .splash-dust,
+  .splash-brand {
+    animation: none !important;
+  }
+
+  .glow-btn:hover,
+  .glow-btn:active {
+    transform: none;
+  }
+
+  /* 通告条退化为静态单行：只留第一条，去掉复制的轨道与分隔符。
+     选择器比工具类多一层，稳定压过 .flex / .hidden，不依赖声明顺序。 */
+  .ticker-root .ticker-copy,
+  .ticker-root .ticker-rest,
+  .ticker-root .ticker-sep {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Motion —— 只动 transform / opacity，且只在允许动效时存在
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @keyframes reveal-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ticker-track {
+    will-change: transform;
+    animation: ticker var(--ticker-duration, 40s) linear infinite;
+  }
+
+  /* 悬停或键盘聚焦时暂停（WCAG 2.2.2 移动内容可暂停） */
+  .ticker-root:hover .ticker-track,
+  .ticker-root:focus-within .ticker-track {
+    animation-play-state: paused;
+  }
+
+  /* 首屏入场阶梯：--i 由页面按顺序给，每级 70ms。
+     fill-mode 用 backwards：延迟期间保持透明起始态，动画结束后不保留 transform，
+     否则动画的 transform 会盖掉卡片自己的 hover 位移。 */
+  .reveal-in {
+    animation: reveal-in 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+
+/* ============================================================
+   Focus visibility —— 全站唯一的键盘焦点样式
+   此前全仓 0 处 focus-visible，另有 18 处输入框写着 `focus:outline-none`，
+   把浏览器默认焦点环也抹掉了，只剩边框变色（暗底金字上几乎不可见）。
+   那些 `focus:outline-none` 已一并删除，焦点环由本规则统一提供。
+   ============================================================ */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* 金融数字一律等宽对齐（所有金额/地址都用 font-mono） */
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   uiv2 首页 / 交易中心（仅展示层；数据全部来自链上调用）
+   ============================================================ */
+.uiv2-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 16px;
+  border: 1px solid rgba(233, 162, 59, 0.18);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(233, 162, 59, 0.22), transparent 55%),
+    linear-gradient(180deg, #16151c, #111117);
+}
+.uiv2-hero .eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: #e9a23b;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.uiv2-hero h1 { font-size: 26px; letter-spacing: -0.02em; margin: 6px 0 4px; font-weight: 700; }
+.uiv2-hero .sub { color: #a7a4ad; font-size: 13px; }
+.uiv2-kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 12px; }
+.uiv2-kv > div {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 10px;
+}
+.uiv2-kv span { display: block; font-size: 11px; color: #6d6a75; }
+.uiv2-kv b { font-size: 15px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.uiv2-cd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  font-size: 12px; color: #a7a4ad; margin-bottom: 12px;
+}
+.uiv2-cd b { font-size: 15px; color: #f4f1ea; font-weight: 700; font-variant-numeric: tabular-nums; }
+.uiv2-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.uiv2-steps > div { text-align: center; font-size: 11.5px; color: #a7a4ad; position: relative; }
+.uiv2-steps i {
+  display: grid; place-items: center; width: 28px; height: 28px; margin: 0 auto 6px;
+  border-radius: 50%; background: #1f1f29; color: #f6c46a; font-style: normal;
+  font-weight: 700; font-size: 12px; border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative; z-index: 1;
+}
+.uiv2-steps > div:not(:last-child)::after {
+  content: ""; position: absolute; top: 14px; left: calc(50% + 18px); right: calc(-50% + 18px);
+  height: 1px; background: rgba(255, 255, 255, 0.12);
+}
+.uiv2-steps small { display: block; color: #6d6a75; font-size: 10.5px; }
+.uiv2-sec { display: flex; justify-content: space-between; align-items: center; margin: 22px 2px 10px; }
+.uiv2-sec b { font-size: 15px; }
+.uiv2-sec a { font-size: 12px; color: #6d6a75; }
+
+/* ============================================================
+   uiv2 组件层（2026-10-23）
+   设计稿把「数字、分区标题、分段控件、列表行」定成四件套：
+   每屏一个主操作 / 先给数据 / 规则可视化 / 导航不遮挡内容。
+   这里只落样式，数据与文案仍由各页面提供。
+   ============================================================ */
+
+/* 金额与统计数字：Inter + tabular-nums（设计稿明确不用等宽字体，地址/哈希仍用 .font-mono） */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* 页面底部留白：84 = 底栏 65 + 呼吸 19；再叠一层安全区。
+   页面根节点统一用它，底栏就永远不会盖住最后一张卡。 */
+.page-pad {
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+}
+
+/* 分区标题：15px 标题 + 右侧 12px 灰色链接（首页/交易/我的共用） */
+.sec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+  margin: 20px 0 10px;
+}
+.sec > b,
+.sec > h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f4f1ea;
+}
+.sec > a {
+  font-size: 12px;
+  color: #6d6a75;
+  transition: color 0.18s;
+}
+.sec > a:hover {
+  color: #f6c46a;
+}
+
+/* 分段控件：容器 #111118，选中块 #1f1f29 + 白字，取代各页各写一套的描边胶囊 */
+.seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #111118;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.seg > button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 36px;
+  border-radius: 10px;
+  padding: 0 8px;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #a7a4ad;
+  white-space: nowrap;
+  transition: background 0.18s, color 0.18s;
+}
+.seg > button[aria-selected='true'] {
+  background: #1f1f29;
+  color: #f4f1ea;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* 列表：一张卡里的多行入口，行高 ≥ 56（触控友好），分割线只在行间 */
+.list {
+  background: #111118;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.li:first-child {
+  border-top: 0;
+}
+/* 多行说明的行（流程卡）：图标与标题顶部对齐，而不是垂直居中 */
+.li.top {
+  align-items: flex-start;
+}
+a.li {
+  transition: background 0.18s;
+}
+a.li:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+a.li:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+/* 图标块：38px 圆角方块，颜色只表达语义（金=主流程，蓝=匹配，绿=付款/成功，红=异常） */
+.ib {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #1f1f29;
+  color: #f6c46a;
+  flex: none;
+}
+.ib.o {
+  background: rgba(233, 162, 59, 0.12);
+}
+.ib.b {
+  background: rgba(106, 168, 255, 0.1);
+  color: #6aa8ff;
+}
+.ib.g {
+  background: rgba(62, 207, 142, 0.1);
+  color: #3ecf8e;
+}
+.ib.r {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+}
+.li .tx {
+  min-width: 0;
+  flex: 1;
+}
+.li .tx b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f4f1ea;
+}
+.li .tx span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #6d6a75;
+}
+.li .val {
+  flex: none;
+  font-size: 12px;
+  color: #a7a4ad;
+}
+.li .chev {
+  flex: none;
+  color: #585662;
+}
+
+/* Admin sidebar active state (mmm /mng) */
+.sidebar-item.active {
+  background-color: rgb(233 162 59 / 0.12);
+  color: #e9a23b;
+  font-weight: 600;
+}

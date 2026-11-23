@@ -1,51 +1,50 @@
 # Indexer
 
-使用 Ponder 构建的区块链索引器，支持自定义 API 端点（参考 [feature-api-functions 示例](https://github.com/ponder-sh/ponder/tree/main/examples/feature-api-functions)）。
+使用 [bponder](https://github.com/chy3xyz/bponder)（Bun-native Ponder fork）构建的区块链索引器，支持自定义 API 端点。
+
+- **运行时**：Bun 执行 [bponder](https://github.com/chy3xyz/bponder) `v0.18.9` CLI（`vendor/bponder`，由 `bun run bponder:install` 拉取并构建）。Release 二进制同时安装到 `~/.bponder/bin`（`codegen` 可用；`start`/`dev` 在 0.18.9 上有已知问题，故脚本走源码 CLI）。
+- **库 API**：`import … from "ponder"`（`ponder@0.18.9`；npm 尚未发布独立 `bponder` 包名）
 
 ## 快速开始
 
-### 安装依赖
-
-在项目根目录运行：
+### 1. 安装依赖与 bponder CLI
 
 ```bash
+# 仓库根目录
 bun install
+bun run bponder:install   # 安装 ~/.bponder/bin/bponder@0.18.9
 ```
 
-### 配置环境变量
+确保 `~/.bponder/bin` 在 `PATH` 中（脚本也会自动回退到该路径）。
 
-创建 `.env` 文件并配置：
+### 2. 配置环境变量
 
 ```bash
 cd packages/indexer
-cp .env.example .env  # 如果存在的话
+cp .env.example .env
 ```
-
-编辑 `.env` 文件，设置你的 RPC URL：
 
 ```env
 PONDER_RPC_URL_1=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY
 ```
 
-### 生成类型定义
+### 3. 生成类型定义
 
-在添加合约到 `ponder.config.ts` 后，运行：
+在添加合约到 `ponder.config.ts` 后：
 
 ```bash
 bun indexer:codegen
 ```
 
-这将生成 Ponder 的类型定义（`ponder:registry`, `ponder:api`, `ponder:schema` 等）。
+生成 `ponder:registry` / `ponder:api` / `ponder:schema` 等虚拟模块类型。
 
-### 运行索引器
-
-从项目根目录运行：
+### 4. 运行索引器
 
 ```bash
 bun indexer
 ```
 
-或者直接进入 indexer 目录：
+或：
 
 ```bash
 cd packages/indexer
@@ -54,11 +53,12 @@ bun dev
 
 ## 可用命令
 
-- `bun indexer` - 启动开发服务器（包含索引器和 API 服务器）
-- `bun indexer:build` - 构建索引器
-- `bun indexer:codegen` - 生成类型定义（在添加合约后运行）
-- `bun indexer:db` - 数据库管理命令
-- `bun indexer:serve` - 仅启动 API 服务器（不运行索引器）
+- `bun indexer` — 开发模式（索引 + API）
+- `bun indexer:build` — 构建
+- `bun indexer:codegen` — 生成类型
+- `bun indexer:db` — 数据库管理
+- `bun indexer:serve` — 仅 API（不索引）
+- `bun run bponder:install` — 安装 / 校验 bponder CLI
 
 ## 项目结构
 
@@ -66,33 +66,42 @@ bun dev
 packages/indexer/
 ├── src/
 │   ├── api/
-│   │   └── index.ts      # Hono API 服务器（自定义端点）
-│   └── index.ts          # 索引逻辑（事件处理）
-├── abis/                 # 合约 ABI 文件
-├── ponder.config.ts      # Ponder 配置（链、合约等）
-└── package.json
+│   │   ├── index.ts         # Hono 入口
+│   │   ├── adminAuth.ts       # Cookie 会话 / 角色（mmm 抽出）
+│   │   ├── graphqlGuard.ts    # API key + 敏感字段 deny
+│   │   ├── rpcGatewayCore.ts  # JSON-RPC 闸门纯逻辑
+│   │   ├── rpcProxy.ts        # POST /rpc 有闸转发
+│   │   └── runtime.ts         # createLimiter / apiRpcUrl
+│   └── index.ts               # 索引逻辑
+├── scripts/run-bponder.sh
+├── ponder.config.ts
+└── ponder.schema.ts
 ```
 
 ## API 端点
 
-API 服务器默认运行在 `http://localhost:42069`。
+默认 `http://localhost:42069`（Solid 经 `/api` 代理）：
 
-- `GET /graphql` - GraphQL 端点（自动生成）
-- `GET /health` - 健康检查（无合约配置时返回 `degraded` / HTTP 503，不是恒 `ok`）
-- `GET /count` - 示例端点（需要根据你的 schema 更新）
+- `GET /health` — bponder 内置 liveness
+- `GET /app/ready` — 应用就绪（`/health`/`/ready` 为保留路径）
+- `GET|POST /graphql` — GraphQL（可选 `GRAPHQL_API_KEY`）
+- `POST /admin/auth/login|logout|change-password` · `GET /admin/auth/me`
+- `GET /admin/ping` — 需登录的示例读接口
+- `POST /rpc` — 公开 JSON-RPC 代理（方法黑名单 + 批量上限 + 按 IP 加权令牌桶；上游 key 只在服务端）
+- `GET /rpc/__stats` — 本机统计（私网）
+- `GET /v1/status` — Bun-native 状态
 
-### 生产安全说明
-
-`/graphql` **默认无鉴权**。生产环境请在前面加 API 网关 / 反向代理鉴权与限流，不要把 GraphQL 裸露到公网。
+需要 `DATABASE_SCHEMA`；后台登录需 `ADMIN_PASSWORD_SHA256` 或 `ADMIN_ACCOUNTS`。  
+RPC 代理设 `RPC_GATEWAY_UPSTREAM`（本地可指向 Anvil `http://127.0.0.1:8545`）。Solid 默认走同源 `/api/rpc`（`VITE_USE_RPC_PROXY=0` 可直连 Anvil）。
 
 ## 配置
 
-1. **添加合约**：编辑 `ponder.config.ts`，在 `contracts` 中添加要索引的合约
-2. **定义 Schema**：运行 `bun indexer:codegen` 后，在 `src/index.ts` 中使用 `ponder:schema` 定义数据库表
-3. **编写索引逻辑**：在 `src/index.ts` 中使用 `ponder.on()` 处理合约事件
-4. **添加 API 端点**：在 `src/api/index.ts` 中使用 Hono 添加自定义 API 端点
+1. 在 `ponder.config.ts` 添加合约
+2. 在 `ponder.schema.ts` 定义表；`bun indexer:codegen`
+3. 在 `src/index.ts` 用 `ponder.on()` 处理事件
+4. 在 `src/api/index.ts` 用 Hono 加自定义路由
 
 ## 更多信息
 
-查看 [Ponder 文档](https://ponder.sh) 和 [API Functions 示例](https://github.com/ponder-sh/ponder/tree/main/examples/feature-api-functions) 了解更多信息。
-
+- [bponder releases](https://github.com/chy3xyz/bponder/releases)
+- [Ponder 概念文档](https://ponder.sh)（共享 API 面）

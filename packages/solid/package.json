@@ -1,0 +1,37 @@
+{
+  "name": "@w3s/solid",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Xfinalw3 Solid dApp scaffold — @wagmi/solid + SolidStart",
+  "scripts": {
+    "dev": "bun --bun vinxi dev --port 5173",
+    "build": "bun --bun vinxi build",
+    "preview": "bun --bun vinxi preview --port 4173",
+    "start": "bun --bun vinxi start",
+    "check": "tsc --noEmit",
+    "i18n:check": "bun --bun ./scripts/check-i18n.mjs"
+  },
+  "dependencies": {
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.15.0",
+    "@solidjs/start": "^1.0.0",
+    "@tanstack/solid-query": "^5.0.0",
+    "@wagmi/connectors": "^7.1.6",
+    "@wagmi/solid": "^0.0.1",
+    "solid-js": "^1.9.0",
+    "viem": "^2.34.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.0",
+    "vinxi": "^0.4.0",
+    "vite": "^5.4.21"
+  },
+  "engines": {
+    "bun": ">=1.4.0"
+  }
+}

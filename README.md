@@ -4,14 +4,14 @@ A modern Web3 development framework for building decentralized applications (dAp
 
 ## Overview
 
-xfinalw3 is a comprehensive toolkit that provides everything you need to build, test, and deploy smart contracts with a modern frontend. It combines the power of Foundry for Solidity development with SvelteKit for the frontend, offering a seamless development experience.
+xfinalw3 is a Bun monorepo for shipping Ethereum dApps: Foundry contracts, Solid + `@wagmi/solid` user/admin UI, bponder indexer (with admin cookie auth), and Bun keepers. Application shells and API patterns are extracted from production MMM Solid/job/indexer code.
 
 ## Tech Stack
 
-- **Frontend**: SvelteKit + Svelte 5, TypeScript, TailwindCSS
+- **Frontend**: SolidStart + `@wagmi/solid` (Xfinalw3 dApp); SvelteKit kept as `bun start:svelte`
 - **Smart Contracts**: Foundry (Solidity)
 - **Web3**: Wagmi, Viem, Reown AppKit
-- **Indexer**: Ponder.sh (Bun)
+- **Indexer**: [bponder](https://github.com/chy3xyz/bponder) (Bun-native Ponder fork)
 - **Cron**: Bun
 - **Package Manager**: Bun
 - **Production**: `@sveltejs/adapter-bun`
@@ -19,8 +19,9 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 ## Features
 
 - ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it
-- 🪝 **Type-Safe Stores**: Collection of Svelte stores wrapper around Wagmi to simplify contract interactions
-- 🧱 **Pre-built Components**: Common Web3 components for quick frontend development
+- 🪝 **Scaffold hooks**: `useScaffoldReadContract` / `useScaffoldWriteContract` on Solid
+- 🖥️ **User + Admin shells**: `/` user app and `/mng` admin (cookie auth → indexer)
+- 🧱 **UI wheels**: Button, Modal, Notify, AdminGuard/Sidebar/Pager, …
 - 🔥 **Local Development**: Built-in local blockchain with Anvil
 - 🔐 **Wallet Integration**: Connect to different wallet providers
 - 🐛 **Debug Tools**: Built-in debug page and block explorer
@@ -32,6 +33,7 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 
 - [Bun](https://bun.sh) >= 1.4.0
 - [Foundry](https://book.getfoundry.sh/getting-started/installation) (forge, anvil)
+- [bponder](https://github.com/chy3xyz/bponder) CLI v0.18.9（`bun run bponder:install`）
 - Git
 
 ### Installation
@@ -41,8 +43,9 @@ xfinalw3 is a comprehensive toolkit that provides everything you need to build, 
 git clone <repository-url>
 cd xfinalw3
 
-# Install dependencies
+# Install dependencies + bponder CLI
 bun install
+bun run bponder:install
 ```
 
 ### Development Workflow
@@ -74,13 +77,11 @@ xfinalw3/
 │   │   ├── script/       # Deployment scripts
 │   │   ├── test/         # Contract tests
 │   │   └── scripts-js/   # JavaScript utilities
-│   ├── sveltekit/        # Frontend application
-│   │   ├── src/
-│   │   │   ├── routes/   # SvelteKit routes
-│   │   │   └── lib/      # Shared libraries
-│   │   └── scaffold.config.ts
-│   ├── indexer/          # Ponder indexer
-│   └── cron/            # Cron jobs
+│   ├── solid/            # Xfinalw3 dApp (SolidStart + @wagmi/solid)
+│   ├── landing/          # Framework marketing site (static)
+│   ├── sveltekit/        # Legacy SvelteKit dApp (optional)
+│   ├── indexer/          # bponder indexer
+│   └── job/              # Cron / jobs
 ├── docs/                 # Documentation
 └── .cursor/             # Cursor IDE rules and skills
 ```
@@ -97,13 +98,18 @@ xfinalw3/
 
 ### Frontend
 
-- `bun start` - Start development server
-- `bun run build` - Build for production (`@sveltejs/adapter-bun`)
-- `bun start:prod` - Run production server (Bun)
+- `bun start` - Start Solid dApp (vinxi :5173)
+- `bun run build` - Build Solid dApp
+- `bun start:prod` - Run Solid production server
+- `bun start:svelte` - Legacy SvelteKit dApp
+- `bun landing` - Framework site preview (`packages/landing` → :8931)
+- `bun run slim:disk` — prune `vendor/bponder` nests + clear Bun install cache（约可省数 GB）
+- `bun run slim:disk:full` — 同上并删掉遗留 `packages/sveltekit/node_modules`（Svelte 已不在 workspaces）
 
 ### Other
 
-- `bun indexer` - Start Ponder indexer (Bun)
+- `bun indexer` - Start bponder indexer
+- `bun run bponder:install` - Install bponder CLI (v0.18.9)
 - `bun cron` - Start cron jobs (Bun)
 
 ## Documentation

@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+# local clones (bponder source used only for experimentation)
+vendor/
+
 
 
 # eslint
@@ -8,6 +11,8 @@ node_modules
 
 # misc
 .DS_Store
+.admin-session-secret
+generated/
 
 # IDE
 .vscode

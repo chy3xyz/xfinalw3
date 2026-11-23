@@ -1,0 +1,15 @@
+{
+  "zh-CN.json": {
+    "mmm.orders.confirmCreateBody": 175,
+    "profile.faq.a9": 104,
+    "profile.faq.a6": 106
+  },
+  "zh-TW.json": {
+    "mmm.orders.confirmCreateBody": 175,
+    "profile.faq.a9": 104,
+    "profile.faq.a6": 106
+  },
+  "ms.json": {
+    "mmm.orders.confirmCreateBody": 753
+  }
+}

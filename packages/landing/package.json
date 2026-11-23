@@ -1,0 +1,10 @@
+{
+  "name": "@w3s/landing",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Xfinalw3 framework marketing site (static)",
+  "scripts": {
+    "start": "python3 -m http.server 8931",
+    "preview": "python3 -m http.server 8931"
+  }
+}

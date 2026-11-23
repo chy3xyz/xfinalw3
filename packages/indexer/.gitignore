@@ -3,4 +3,6 @@ node_modules
 .ponder
 dist
 .generated
+generated
+.admin-session-secret
 

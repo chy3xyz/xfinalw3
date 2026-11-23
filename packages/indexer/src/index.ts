@@ -1,14 +1,14 @@
-import { ponder } from "ponder:registry";
+import { ponder } from "ponder:registry"
+import { meta } from "ponder:schema"
 
-// Example: Handle block events
-ponder.on("block", async ({ context }) => {
-  // Your indexing logic here
-  // Access context.db, context.chain, context.client, etc.
-});
-
-// Example: Handle contract events (uncomment and configure when you add contracts)
-// ponder.on("ContractName:EventName", async ({ event, context }) => {
-//   await context.db.insert(tableName).values({
-//     // your data here
-//   });
-// });
+ponder.on("Heartbeat:block", async ({ event, context }) => {
+  await context.db
+    .insert(meta)
+    .values({
+      key: "last_heartbeat_block",
+      value: event.block.number.toString()
+    })
+    .onConflictDoUpdate({
+      value: event.block.number.toString()
+    })
+})

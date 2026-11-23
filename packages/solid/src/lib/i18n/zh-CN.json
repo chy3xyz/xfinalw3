@@ -1,0 +1,232 @@
+{
+  "app": {
+    "name": "Xfinalw3",
+    "tagline": "基于 Solid + @wagmi/solid 的以太坊 dApp 脚手架"
+  },
+  "common": {
+    "retry": "重试",
+    "cancel": "取消",
+    "save": "保存",
+    "hot": "热门",
+    "copy": "复制",
+    "copied": "已复制",
+    "share": "分享",
+    "scaffoldStub": "脚手架占位页 — 接下来接你的合约 / 索引。布局与导航可直接留用。"
+  },
+  "invite": {
+    "title": "邀请好友",
+    "codeLabel": "我的邀请码",
+    "copyLink": "复制链接",
+    "hint": "好友打开你的链接后进入你的网体；接上推荐合约后即可统计奖励。",
+    "shareText": "一起来玩 Xfinalw3",
+    "shareCopiedOnly": "已复制链接（系统分享面板未打开）",
+    "needWallet": "连接钱包后生成邀请码与链接",
+    "landingTitle": "好友邀请你加入",
+    "landingDesc": "邀请码 {code} 已就绪。连接钱包后即可开始。",
+    "landingConnect": "请先连接钱包，邀请码会自动保留。",
+    "landingCta": "查看邀请入口",
+    "pendingLabel": "待绑定邀请码"
+  },
+  "nav": {
+    "home": "首页",
+    "trade": "交易",
+    "swap": "闪兑",
+    "me": "我的",
+    "team": "团队",
+    "assets": "资产",
+    "faq": "帮助",
+    "debug": "调试",
+    "admin": "后台"
+  },
+  "announcements": {
+    "welcome": "欢迎使用 Xfinalw3 — Bun 原生栈，用户端 + 管理端双壳",
+    "rpcProxy": "浏览器 RPC 走闸门 /api/rpc — 密钥只留在 indexer",
+    "scaffold": "Counter 演示在首页「开发演示」与调试页"
+  },
+  "features": {
+    "trade": {
+      "title": "交易所",
+      "desc": "下单大厅与交易入口"
+    },
+    "swap": {
+      "title": "闪兑",
+      "desc": "带报价壳的快捷兑换"
+    },
+    "assets": {
+      "title": "资产",
+      "desc": "余额、锁定与可领"
+    },
+    "team": {
+      "title": "团队",
+      "desc": "邀请链接与网体占位"
+    },
+    "faq": {
+      "title": "帮助",
+      "desc": "用户常见问题"
+    },
+    "me": {
+      "title": "个人中心",
+      "desc": "身份、快捷入口、设置"
+    }
+  },
+  "home": {
+    "poster": {
+      "eyebrow": "Xfinalw3 应用",
+      "title": "用 Bun 原生栈交付产品 UI",
+      "sub": "首页海报、公告、功能入口 — 留下业务壳，换上你的合约即可。",
+      "cta": "进入交易所",
+      "secondary": "帮助"
+    },
+    "entries": "功能入口",
+    "snapshot": "会话摘要",
+    "notices": "公告",
+    "devDemo": "开发演示 · Counter",
+    "increment": "加一",
+    "counterHint": "读不到 — 请确认 Anvil 已开且执行过 bun deploy:local",
+    "stat": {
+      "network": "链",
+      "wallet": "钱包",
+      "disconnected": "未连",
+      "announcements": "公告"
+    },
+    "connectWalletFirst": "请先连接钱包以操作合约",
+    "counter": "计数器",
+    "quickStart": "快速开始：bun chain → bun deploy:local → 连接钱包"
+  },
+  "trade": {
+    "title": "交易所",
+    "lead": "交易大厅壳 — 买卖按钮先禁用，接上撮合 / 订单合约后再开。",
+    "book": "下单操作",
+    "buy": "买入",
+    "sell": "卖出",
+    "bookHint": "换成你的下单表单 + scaffold write hooks。",
+    "more": "相关入口",
+    "panel": {
+      "swap": "去闪兑",
+      "swapDesc": "快捷兑换界面",
+      "assets": "查看资产",
+      "assetsDesc": "余额与持仓",
+      "orders": "个人中心 / 历史",
+      "ordersDesc": "个人中心入口"
+    }
+  },
+  "swap": {
+    "title": "闪兑",
+    "lead": "报价 UI 脚手架 — 费率是占位（演示 0.2% 扣减）。",
+    "from": "支付",
+    "to": "获得",
+    "rateHint": "把 quote() 换成 vault / AMM 读数。",
+    "submit": "兑换"
+  },
+  "me": {
+    "title": "个人中心",
+    "lead": "身份、资产快捷入口、团队与帮助 — 产品页挂在这里。",
+    "identity": "钱包",
+    "copy": "复制",
+    "copied": "地址已复制",
+    "chain": "链 ID",
+    "status": "状态",
+    "connected": "已连接",
+    "shortcuts": "快捷入口",
+    "more": "更多"
+  },
+  "assets": {
+    "title": "资产",
+    "lead": "余额面板 — 用 scaffold hooks 接 ERC-20 / vault 读取。",
+    "native": "原生币",
+    "token": "代币",
+    "locked": "锁定",
+    "claimable": "可领",
+    "positions": "持仓",
+    "empty": "暂无持仓。接索引或合约读数后填充。"
+  },
+  "team": {
+    "title": "团队",
+    "lead": "邀请与网体壳 — 把统计换成你的推荐图数据。",
+    "direct": "直推",
+    "team": "团队",
+    "volume": "业绩",
+    "invite": "邀请好友",
+    "copyInvite": "复制链接",
+    "copied": "邀请链接已复制",
+    "needWallet": "连接钱包后生成邀请",
+    "members": "成员",
+    "emptyTitle": "还没有成员",
+    "emptyDesc": "分享你的邀请码。列表可从 indexer GraphQL 拉取。"
+  },
+  "faq": {
+    "title": "常见问题",
+    "lead": "文案在 lib/config/appContent.ts — 后续也可改成索引器公告。",
+    "q1": "Xfinalw3 是什么？",
+    "a1": "Bun monorepo 脚手架：Solid dApp、Foundry、bponder 索引与 Bun 任务，带用户端与管理端双壳。",
+    "q2": "钱包 RPC 怎么走？",
+    "a2": "默认走同源 /api/rpc（indexer 方法白名单 + 限流）。设 VITE_USE_RPC_PROXY=0 可直连 Anvil。",
+    "q3": "怎么扩展首页入口？",
+    "a3": "改 appContent.ts 的 HOME_FEATURES，并在 routes/(app) 加对应路由。",
+    "q4": "必须保留 Counter 吗？",
+    "a4": "不必 — 只是首页 / 调试页的冒烟演示，换成你的产品合约即可。"
+  },
+  "wallet": {
+    "connect": "连接钱包",
+    "disconnect": "断开",
+    "noInjected": "未检测到浏览器钱包。请安装 MetaMask / OKX，或配置 WalletConnect。",
+    "wcNotConfigured": "未配置 WalletConnect Project ID。",
+    "wrongNetwork": "网络不正确 — 请切换到本地 Foundry/Anvil（31337）。",
+    "rejected": "已在钱包中拒绝请求。",
+    "insufficient": "余额不足以支付 gas。"
+  },
+  "errors": {
+    "reverted": "链上交易被回滚。",
+    "network": "网络 / RPC 错误，请重试或检查节点。"
+  },
+  "admin": {
+    "guard": {
+      "title": "管理后台登录",
+      "username": "用户名",
+      "password": "密码",
+      "submit": "登录",
+      "submitting": "登录中…",
+      "failed": "登录失败",
+      "serviceDown": "后台 API 不可用"
+    },
+    "nav": {
+      "portalTitle": "Xfinalw3 后台",
+      "groupOverview": "总览",
+      "menuDashboard": "控制台",
+      "menuDebug": "合约调试",
+      "mainNav": "后台导航",
+      "closeMenu": "关闭菜单",
+      "openMenu": "打开菜单",
+      "searchMenus": "搜索菜单",
+      "toLight": "浅色模式",
+      "toDark": "深色模式",
+      "admin": "管理员",
+      "changePwd": "修改密码",
+      "logout": "退出登录",
+      "loggedOut": "已退出",
+      "logoutFailed": "退出失败",
+      "changePwdTitle": "修改密码",
+      "pwdOld": "当前密码",
+      "pwdNew": "新密码",
+      "pwdConfirm": "确认新密码",
+      "pwdMissing": "请填写新旧密码",
+      "pwdMismatch": "两次新密码不一致",
+      "pwdChanged": "密码已更新",
+      "pwdChangeFailed": "修改密码失败",
+      "pwdSaving": "保存中…",
+      "noMatch": "无匹配菜单"
+    },
+    "pager": {
+      "page": "第 {page} 页",
+      "total": "共 {total} 条",
+      "perPage": "每页 {n} 条",
+      "prev": "上一页",
+      "next": "下一页"
+    },
+    "dashboard": {
+      "title": "运营控制台",
+      "lead": "从 MMM 生产后台抽出的壳：Cookie 会话、角色、侧栏、⌘K。在 /mng 与 indexer /admin/* 上接业务路由。",
+      "session": "会话"
+    }
+  }
+}

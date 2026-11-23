@@ -28,15 +28,15 @@
 
 密钥在 `~/.foundry/keystores`；`account:reveal-pk` 必须带 `--yes-print`。
 
-## Indexer（`packages/indexer`）
+## Indexer（`packages/indexer` / bponder）
 
 | 变量 | 必需 | 说明 |
 |------|------|------|
 | `PONDER_RPC_URL_1` | **必需** | 缺省则配置加载失败 |
+| `DATABASE_SCHEMA` | **必需**（Bun-native） | Postgres/PGlite schema 名，例如 `xfinalw3` |
 | `DATABASE_URL` | 可选 | 默认可用 pglite；生产建议 Postgres |
 
-API 默认 `:42069`。`/graphql` 无鉴权——生产加网关。
-
+API 默认 `:42069`。内置 `/health`；应用就绪 `/app/ready`。`/graphql` 无鉴权——生产加网关。
 ## Cron（`packages/cron`）
 
 | 变量 | 必需 | 说明 |

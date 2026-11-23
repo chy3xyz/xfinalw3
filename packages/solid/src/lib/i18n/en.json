@@ -1,0 +1,232 @@
+{
+  "app": {
+    "name": "Xfinalw3",
+    "tagline": "Solid + @wagmi/solid scaffold for Ethereum dApps"
+  },
+  "common": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "hot": "HOT",
+    "copy": "Copy",
+    "copied": "Copied",
+    "share": "Share",
+    "scaffoldStub": "Scaffold surface — wire your contracts / indexer next. Layout and navigation stay."
+  },
+  "invite": {
+    "title": "Invite friends",
+    "codeLabel": "My invite code",
+    "copyLink": "Copy link",
+    "hint": "Friends who open your link join your downline. Wire a referral contract to track rewards.",
+    "shareText": "Join me on Xfinalw3",
+    "shareCopiedOnly": "Link copied (the share sheet did not open)",
+    "needWallet": "Connect a wallet to generate your invite code and link",
+    "landingTitle": "You're invited",
+    "landingDesc": "Invite code {code} is ready. Connect a wallet to continue.",
+    "landingConnect": "Connect a wallet first — the invite code is kept for you.",
+    "landingCta": "See invite entry",
+    "pendingLabel": "Pending invite code"
+  },
+  "nav": {
+    "home": "Home",
+    "trade": "Trade",
+    "swap": "Swap",
+    "me": "Me",
+    "team": "Team",
+    "assets": "Assets",
+    "faq": "FAQ",
+    "debug": "Debug",
+    "admin": "Admin"
+  },
+  "announcements": {
+    "welcome": "Welcome to Xfinalw3 — Bun-native stack with user + admin shells",
+    "rpcProxy": "Browser RPC goes through gated /api/rpc — keys stay on the indexer",
+    "scaffold": "Counter demo lives under Home → Dev playground / Debug"
+  },
+  "features": {
+    "trade": {
+      "title": "Exchange",
+      "desc": "Order book hub & trade shortcuts"
+    },
+    "swap": {
+      "title": "Swap",
+      "desc": "Quick convert with quote shell"
+    },
+    "assets": {
+      "title": "Assets",
+      "desc": "Balances, locked & claimable"
+    },
+    "team": {
+      "title": "Team",
+      "desc": "Invite link & downline placeholders"
+    },
+    "faq": {
+      "title": "FAQ",
+      "desc": "Common questions for users"
+    },
+    "me": {
+      "title": "Profile",
+      "desc": "Identity, shortcuts, settings"
+    }
+  },
+  "home": {
+    "poster": {
+      "eyebrow": "Xfinalw3 App",
+      "title": "Ship product UI on a Bun-native stack",
+      "sub": "Home poster, announcements, feature entries — keep the business shell, swap in your contracts.",
+      "cta": "Enter exchange",
+      "secondary": "FAQ"
+    },
+    "entries": "Feature entries",
+    "snapshot": "Session snapshot",
+    "notices": "Notices",
+    "devDemo": "Dev playground · Counter",
+    "increment": "Increment",
+    "counterHint": "Unread — is Anvil up and bun deploy:local done?",
+    "stat": {
+      "network": "Chain",
+      "wallet": "Wallet",
+      "disconnected": "Off",
+      "announcements": "News"
+    },
+    "connectWalletFirst": "Connect a wallet to interact with contracts",
+    "counter": "Counter",
+    "quickStart": "Quick start: bun chain → bun deploy:local → connect wallet"
+  },
+  "trade": {
+    "title": "Exchange",
+    "lead": "Trading hub shell — buy/sell actions disabled until you wire matching / order contracts.",
+    "book": "Order actions",
+    "buy": "Buy",
+    "sell": "Sell",
+    "bookHint": "Replace with your order form + scaffold write hooks.",
+    "more": "Related",
+    "panel": {
+      "swap": "Open swap",
+      "swapDesc": "Point convert UI",
+      "assets": "View assets",
+      "assetsDesc": "Balances & positions",
+      "orders": "Profile / history",
+      "ordersDesc": "Personal center entry"
+    }
+  },
+  "swap": {
+    "title": "Swap",
+    "lead": "Quote UI scaffold — rate is a placeholder (0.2% fee demo).",
+    "from": "You pay",
+    "to": "You receive",
+    "rateHint": "Replace quote() with vault / AMM reads.",
+    "submit": "Swap"
+  },
+  "me": {
+    "title": "Personal center",
+    "lead": "Identity, asset shortcuts, team & FAQ — product pages plug in here.",
+    "identity": "Wallet",
+    "copy": "Copy",
+    "copied": "Address copied",
+    "chain": "Chain ID",
+    "status": "Status",
+    "connected": "Connected",
+    "shortcuts": "Shortcuts",
+    "more": "More"
+  },
+  "assets": {
+    "title": "Assets",
+    "lead": "Balances panel — hook ERC-20 / vault reads via scaffold hooks.",
+    "native": "Native",
+    "token": "Token",
+    "locked": "Locked",
+    "claimable": "Claimable",
+    "positions": "Positions",
+    "empty": "No positions yet. Wire indexer or contract reads to populate."
+  },
+  "team": {
+    "title": "Team",
+    "lead": "Invite & downline shell — replace stats with your referral graph.",
+    "direct": "Direct",
+    "team": "Team",
+    "volume": "Volume",
+    "invite": "Invite friends",
+    "copyInvite": "Copy link",
+    "copied": "Invite link copied",
+    "needWallet": "Connect wallet to generate invite",
+    "members": "Members",
+    "emptyTitle": "No members yet",
+    "emptyDesc": "Share your invite code. List will come from indexer GraphQL."
+  },
+  "faq": {
+    "title": "FAQ",
+    "lead": "Editable in lib/config/appContent.ts — or load from indexer announcements later.",
+    "q1": "What is Xfinalw3?",
+    "a1": "A Bun monorepo scaffold: Solid dApp, Foundry, bponder indexer, and Bun jobs — with user + admin shells.",
+    "q2": "Where does wallet RPC go?",
+    "a2": "By default through same-origin /api/rpc on the indexer (method allow-list + rate limit). Set VITE_USE_RPC_PROXY=0 to hit Anvil directly.",
+    "q3": "How do I extend the home entries?",
+    "a3": "Edit HOME_FEATURES in appContent.ts and add matching routes under routes/(app).",
+    "q4": "Is Counter required?",
+    "a4": "No — it is only a smoke demo on Home / Debug. Replace with your product contracts."
+  },
+  "wallet": {
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "noInjected": "No browser wallet found. Install MetaMask / OKX, or configure WalletConnect.",
+    "wcNotConfigured": "WalletConnect project id is not configured.",
+    "wrongNetwork": "Wrong network — switch to the local Foundry/Anvil chain (31337).",
+    "rejected": "Request rejected in wallet.",
+    "insufficient": "Insufficient funds for gas."
+  },
+  "errors": {
+    "reverted": "Transaction reverted on-chain.",
+    "network": "Network / RPC error. Retry or check your node."
+  },
+  "admin": {
+    "guard": {
+      "title": "Admin sign-in",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "failed": "Sign-in failed",
+      "serviceDown": "Admin API unreachable"
+    },
+    "nav": {
+      "portalTitle": "Xfinalw3 Admin",
+      "groupOverview": "Overview",
+      "menuDashboard": "Dashboard",
+      "menuDebug": "Contract debug",
+      "mainNav": "Admin navigation",
+      "closeMenu": "Close menu",
+      "openMenu": "Open menu",
+      "searchMenus": "Search menus",
+      "toLight": "Light mode",
+      "toDark": "Dark mode",
+      "admin": "Admin",
+      "changePwd": "Change password",
+      "logout": "Log out",
+      "loggedOut": "Signed out",
+      "logoutFailed": "Logout failed",
+      "changePwdTitle": "Change password",
+      "pwdOld": "Current password",
+      "pwdNew": "New password",
+      "pwdConfirm": "Confirm new password",
+      "pwdMissing": "Fill both passwords",
+      "pwdMismatch": "New passwords do not match",
+      "pwdChanged": "Password updated",
+      "pwdChangeFailed": "Password change failed",
+      "pwdSaving": "Saving…",
+      "noMatch": "No matching menus"
+    },
+    "pager": {
+      "page": "Page {page}",
+      "total": "{total} total",
+      "perPage": "{n} / page",
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "dashboard": {
+      "title": "Operations dashboard",
+      "lead": "Shell extracted from production MMM admin: cookie auth, roles, sidebar, ⌘K. Wire product routes under /mng and /admin/* on the indexer.",
+      "session": "Session"
+    }
+  }
+}

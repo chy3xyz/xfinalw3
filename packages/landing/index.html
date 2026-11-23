@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xfinalw3 · Bun-native Ethereum dApp framework</title>
+  <meta name="description" content="Xfinalw3: Solid + @wagmi/solid, Foundry, bponder indexer — one Bun monorepo to ship Ethereum dApps fast." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0a0f'/%3E%3Cpath d='M8 22V10h4.2l3.8 7.4L19.8 10H24v12h-3.2v-6.6L17.2 22h-2.4l-3.6-6.6V22H8z' fill='%2322d3ee'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">◈</span>
+        <span class="brand-name" data-i18n="nav.brand">Xfinalw3</span>
+      </a>
+      <nav class="nav-links" id="navLinks" aria-label="Primary">
+        <a href="#stack" data-i18n="nav.stack">Stack</a>
+        <a href="#flow" data-i18n="nav.flow">Flow</a>
+        <a href="#scaffold" data-i18n="nav.scaffold">Scaffold</a>
+        <a href="#indexer" data-i18n="nav.indexer">Indexer</a>
+        <a href="#rules" data-i18n="nav.rules">Rules</a>
+      </nav>
+      <select id="langSwitch" class="lang-switch" aria-label="Language"></select>
+      <a class="btn btn-gold btn-sm nav-cta" href="#join" data-i18n="nav.enter">Get started</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <canvas id="swarmCanvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.55;"></canvas>
+      <div class="hero-orbit" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <p class="hero-brand" data-i18n="hero.brand">Xfinalw3</p>
+        <h1 class="hero-title" style="font-size:clamp(3rem,9vw,5.25rem)">
+          <span data-i18n="hero.title1">Ship Ethereum dApps</span><br />
+          <span class="grad" data-i18n="hero.title2">on a Bun-native stack</span>
+        </h1>
+        <p class="hero-sub" data-i18n-html data-i18n="hero.sub">
+          One monorepo: <b>Solid + @wagmi/solid</b>, Foundry, and Bun-native bponder.
+          Scaffold hooks and UI wheels so you iterate contracts and product UI in the same loop.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn btn-gold" href="#flow" data-i18n="hero.cta1">See the loop</a>
+          <a class="btn btn-teal" href="#scaffold" data-i18n="hero.cta2">Scaffold wheels</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="story container" id="stack">
+      <p class="eyebrow" data-i18n="stack.eyebrow">WHY XFINALW3</p>
+      <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)" data-i18n="stack.title">Framework advantages, not another wallet demo</h2>
+      <p class="story-lead" data-i18n="stack.lead">
+        Built for teams that want Bun everywhere, typed contract UI, and an indexer that does not fight Node.
+      </p>
+      <div class="loop">
+        <div class="loop-node loop-a">
+          <b data-i18n="stack.n1.b">① Bun only</b>
+          <span data-i18n="stack.n1.s">Install, scripts, SSR/static build, and indexer CLI — one runtime. No pnpm/Node dual stack.</span>
+        </div>
+        <div class="loop-line" aria-hidden="true">→</div>
+        <div class="loop-node loop-b">
+          <b data-i18n="stack.n2.b">② Solid + wagmi</b>
+          <span data-i18n="stack.n2.s">Primary dApp on SolidStart with @wagmi/solid. Fine-grained reactivity without React tax.</span>
+        </div>
+        <div class="loop-line" aria-hidden="true">→</div>
+        <div class="loop-node loop-c">
+          <b data-i18n="stack.n3.b">③ Foundry + index</b>
+          <span data-i18n="stack.n3.s">Contracts in Foundry; events in bponder. Same repo, shared deploy artifacts.</span>
+        </div>
+      </div>
+      <p class="story-quote" data-i18n="stack.quote">「Write Solidity → deploy local → bind UI with scaffold hooks → index with bponder。」</p>
+    </section>
+
+    <section class="domain domain-sea" id="flow">
+      <div class="container">
+        <div class="domain-head">
+          <div>
+            <p class="eyebrow" data-i18n="flow.eyebrow">DEV LOOP</p>
+            <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)">
+              <span data-i18n="flow.title">Four terminals, one habit</span>
+              <span class="tag-gold" data-i18n="flow.tag">local-first</span>
+            </h2>
+            <p class="domain-desc" data-i18n="flow.desc">
+              The happy path is intentionally boring: Anvil, deploy, Solid dApp, optional indexer. Debug page lists every deployed address for the active chain.
+            </p>
+          </div>
+          <a class="btn btn-gold" href="#join" data-i18n="flow.cta">Start coding →</a>
+        </div>
+        <div class="bento bento-sea">
+          <article class="cell cell-lg">
+            <span class="cell-num">01</span>
+            <p class="cell-title" data-i18n="flow.c1.h">bun chain</p>
+            <p data-i18n="flow.c1.p">Local Anvil/Foundry chain on 8545. Deterministic accounts, fast feedback, no faucet hunting.</p>
+          </article>
+          <article class="cell">
+            <span class="cell-num">02</span>
+            <p class="cell-title" data-i18n="flow.c2.h">bun deploy:local</p>
+            <p data-i18n="flow.c2.p">Deploys Counter (and your scripts). Writes into deployedContracts shared by the Solid dApp.</p>
+          </article>
+          <article class="cell">
+            <span class="cell-num">03</span>
+            <p class="cell-title" data-i18n="flow.c3.h">bun start</p>
+            <p data-i18n="flow.c3.p">SolidStart on :5173 with @wagmi/solid. Connect wallet, hit /debug, iterate UI against live local ABIs.</p>
+          </article>
+          <article class="cell cell-accent">
+            <span class="cell-num">04</span>
+            <p class="cell-title" data-i18n="flow.c4.h">bun indexer</p>
+            <p data-i18n="flow.c4.p">bponder Bun-native CLI indexes chains; GraphQL + /v1 for product queries when you outgrow client eth_getLogs.</p>
+          </article>
+        </div>
+        <ul class="rule-strip" aria-label="Flow rules">
+          <li data-i18n="flow.r1">Package manager &amp; runtime: Bun ≥ 1.4 only — do not introduce Node/pnpm as prerequisites.</li>
+          <li data-i18n="flow.r2">Contract addresses/ABIs live in packages/solid/src/lib/contracts — regenerate via Foundry deploy, do not hand-edit forever.</li>
+          <li data-i18n="flow.r3">Default target network in scaffold.config is Foundry (31337); override RPCs there, not in scattered env files.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="domain domain-quest" id="scaffold">
+      <div class="container">
+        <div class="domain-head">
+          <div>
+            <p class="eyebrow" data-i18n="scaffold.eyebrow">SCAFFOLD WHEELS</p>
+            <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)">
+              <span data-i18n="scaffold.title">Keep the wheels that speed shipping</span>
+              <span class="tag-teal" data-i18n="scaffold.tag">Solid patterns</span>
+            </h2>
+            <p class="domain-desc" data-i18n="scaffold.desc">
+              Extracted from a production Solid app, aligned with the Svelte scaffold mental model: name the contract, call the function — ABI and address resolve for you.
+            </p>
+          </div>
+        </div>
+        <div class="quest-grid">
+          <div class="bento bento-quest">
+            <article class="cell">
+              <span class="cell-num">01</span>
+              <p class="cell-title" data-i18n="scaffold.c1.h">useScaffoldReadContract</p>
+              <p data-i18n="scaffold.c1.p">Typed reads by contractName + functionName. Optional watch polling. Same idea as the Svelte store, Solid signals under the hood.</p>
+            </article>
+            <article class="cell">
+              <span class="cell-num">02</span>
+              <p class="cell-title" data-i18n="scaffold.c2.h">useScaffoldWriteContract</p>
+              <p data-i18n="scaffold.c2.p">writeContractAsync with simulate, mining state, and toast feedback. Wrong network / missing deploy fails loudly.</p>
+            </article>
+            <article class="cell">
+              <span class="cell-num">03</span>
+              <p class="cell-title" data-i18n="scaffold.c3.h">UI kit + shell</p>
+              <p data-i18n="scaffold.c3.p">Button, Card, Modal, Notify, ConnectGate, SiteHeader, BottomNav, ChainBanner — dark theme ready for product pages.</p>
+            </article>
+            <article class="cell">
+              <span class="cell-num">04</span>
+              <p class="cell-title" data-i18n="scaffold.c4.h">Wallet layer</p>
+              <p data-i18n="scaffold.c4.p">@wagmi/solid config, injected + optional WalletConnect, ensureTargetChain, classifyError — one place for connect/read/write.</p>
+            </article>
+          </div>
+          <div class="quest-panel">
+            <p class="cell-title" data-i18n="scaffold.panelTitle">Contract UI rule</p>
+            <table class="mult-table" aria-label="Scaffold rules">
+              <tbody>
+                <tr><td data-i18n="scaffold.m1">Reads</td><td class="mono">useScaffoldReadContract</td></tr>
+                <tr><td data-i18n="scaffold.m2">Writes</td><td class="mono">useScaffoldWriteContract</td></tr>
+                <tr><td data-i18n="scaffold.m3">ABIs</td><td class="mono">deployedContracts.ts</td></tr>
+                <tr><td data-i18n="scaffold.m4">Config</td><td class="mono">scaffold.config.ts</td></tr>
+                <tr><td data-i18n="scaffold.m5">Legacy UI</td><td class="mono">bun start:svelte</td></tr>
+              </tbody>
+            </table>
+            <p class="quest-panel-note" data-i18n="scaffold.note">Prefer scaffold hooks over ad-hoc viem clients for app contract calls — keeps multi-chain and deploy sync boringly correct.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="domain domain-sea" id="indexer">
+      <div class="container">
+        <div class="domain-head">
+          <div>
+            <p class="eyebrow" data-i18n="indexer.eyebrow">BPONDER</p>
+            <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)">
+              <span data-i18n="indexer.title">Bun-native indexing when logs get serious</span>
+              <span class="tag-gold" data-i18n="indexer.tag">v0.18.9</span>
+            </h2>
+            <p class="domain-desc" data-i18n="indexer.desc">
+              bponder is the Bun fork of Ponder. Xfinalw3 vendors the CLI path, requires DATABASE_SCHEMA, and exposes honest /app/ready alongside built-in /health.
+            </p>
+          </div>
+          <a class="btn btn-gold" href="#join" data-i18n="indexer.cta">Install CLI →</a>
+        </div>
+        <div class="bento bento-sea">
+          <article class="cell cell-lg">
+            <span class="cell-num">01</span>
+            <p class="cell-title" data-i18n="indexer.c1.h">bun run bponder:install</p>
+            <p data-i18n="indexer.c1.p">Pins Release binary + builds vendor CLI. Scripts run via Bun on the fork entry — reliable on 0.18.9.</p>
+          </article>
+          <article class="cell">
+            <span class="cell-num">02</span>
+            <p class="cell-title" data-i18n="indexer.c2.h">Same ponder:* surface</p>
+            <p data-i18n="indexer.c2.p">Library imports stay from "ponder"; runtime is Bun-native. Schema + handlers live under packages/indexer.</p>
+          </article>
+          <article class="cell">
+            <span class="cell-num">03</span>
+            <p class="cell-title" data-i18n="indexer.c3.h">/v1 + GraphQL</p>
+            <p data-i18n="indexer.c3.p">Query stack for products; Solid can proxy /ponder in vinxi while you develop against localhost:42069.</p>
+          </article>
+          <article class="cell cell-accent-cyan">
+            <span class="cell-num">04</span>
+            <p class="cell-title" data-i18n="indexer.c4.h">Health that tells truth</p>
+            <p data-i18n="indexer.c4.p">Built-in /health for liveness; app /app/ready for readiness. Reserved paths are documented — no silent always-ok stubs.</p>
+          </article>
+        </div>
+        <ul class="rule-strip" aria-label="Indexer rules">
+          <li data-i18n="indexer.r1">DATABASE_SCHEMA is required for Bun-native start/dev/serve.</li>
+          <li data-i18n="indexer.r2">Do not mount custom Hono routes on /health, /ready, /status, /metrics, or /v1/*.</li>
+          <li data-i18n="indexer.r3">At least one indexing function must be registered — empty scaffolds fail validation on purpose.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="data" id="rules">
+      <div class="container">
+        <p class="eyebrow" data-i18n="rules.eyebrow">CONVENTIONS</p>
+        <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)" data-i18n="rules.title">Guardrails that keep the monorepo sane</h2>
+        <div class="data-grid">
+          <div class="data-cell"><b>Bun</b><span data-i18n="rules.d1">Runtime + PM</span></div>
+          <div class="data-cell"><b>Solid</b><span data-i18n="rules.d2">Primary dApp</span></div>
+          <div class="data-cell"><b>Foundry</b><span data-i18n="rules.d3">Contracts</span></div>
+          <div class="data-cell"><b>bponder</b><span data-i18n="rules.d4">Indexer</span></div>
+          <div class="data-cell"><b>hooks</b><span data-i18n="rules.d5">Scaffold R/W</span></div>
+          <div class="data-cell"><b>31337</b><span data-i18n="rules.d6">Local default</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="roadmap container" id="roadmap">
+      <p class="eyebrow" data-i18n="rp.eyebrow">PACKAGE MAP</p>
+      <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)" data-i18n="rp.title">What lives where</h2>
+      <ol class="timeline">
+        <li class="done"><b>packages/solid</b><span data-i18n="rp.p1.s">Xfinalw3 dApp — SolidStart, @wagmi/solid, UI wheels, scaffold hooks</span><em data-i18n="rp.done">primary</em></li>
+        <li class="done"><b>packages/foundry</b><span data-i18n="rp.p2.s">Solidity, tests, deploy scripts, Anvil</span><em data-i18n="rp.done">primary</em></li>
+        <li class="done"><b>packages/indexer</b><span data-i18n="rp.p3.s">bponder project — schema, handlers, Hono /app/ready</span><em data-i18n="rp.done">primary</em></li>
+        <li class="next"><b>packages/sveltekit</b><span data-i18n="rp.p4.s">Legacy Svelte UI — bun start:svelte when you need it</span><em data-i18n="rp.opt">optional</em></li>
+        <li class="next"><b>packages/job</b><span data-i18n="rp.p5.s">Background jobs / cron-style workers via Bun</span><em data-i18n="rp.opt">optional</em></li>
+      </ol>
+    </section>
+
+    <section class="join" id="join">
+      <div class="container join-inner">
+        <p class="eyebrow" data-i18n="join.eyebrow">GET STARTED</p>
+        <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem)" data-i18n="join.title">Clone, install, ship the loop</h2>
+        <div class="role-grid">
+          <div class="role"><b data-i18n="join.r1.b">Prereqs</b><span data-i18n="join.r1.s">Bun ≥ 1.4, Foundry (forge/anvil), Git. No Node required for the happy path.</span></div>
+          <div class="role"><b data-i18n="join.r2.b">Install</b><span data-i18n="join.r2.s">bun install · bun run bponder:install · copy packages/*/ .env.example</span></div>
+          <div class="role role-hot"><b data-i18n="join.r3.b">Run</b><span data-i18n="join.r3.s">bun chain · bun deploy:local · bun start · optional bun indexer</span></div>
+          <div class="role"><b data-i18n="join.r4.b">Extend</b><span data-i18n="join.r4.s">Add Solidity + tests, wire scaffold hooks, grow indexer schema when product needs history.</span></div>
+        </div>
+        <p class="join-cta-line" data-i18n="join.ctaLine">Open the repo root and run the four commands — the Solid Counter page is the smoke test.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-gold" href="#flow" data-i18n="join.cta1">Review the loop</a>
+          <a class="btn btn-teal" href="#scaffold" data-i18n="join.cta2">Scaffold docs</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <p class="footer-brand"><span data-i18n="ft.brand">Xfinalw3</span> <em>FRAMEWORK</em></p>
+        <p class="footer-note" data-i18n="ft.note">Bun-native Ethereum scaffold: Solid + @wagmi/solid, Foundry, bponder.</p>
+      </div>
+      <div class="footer-col">
+        <p class="footer-h" data-i18n="ft.h1">Commands</p>
+        <a href="#flow" data-i18n="ft.l1">Dev loop</a>
+        <a href="#indexer" data-i18n="ft.l2">Indexer setup</a>
+      </div>
+      <div class="footer-col">
+        <p class="footer-h" data-i18n="ft.h2">Defaults</p>
+        <p class="mono"><span data-i18n="ft.c1">dApp :5173</span><br />SolidStart</p>
+        <p class="mono"><span data-i18n="ft.c2">Indexer :42069</span><br />bponder</p>
+      </div>
+    </div>
+    <div class="container">
+      <p class="disclaimer" data-i18n="ft.disclaimer">Xfinalw3 is a development framework. Smart contracts you deploy remain your responsibility — audit before mainnet.</p>
+      <p class="copyright" data-i18n="ft.copyright">© 2026 Xfinalw3</p>
+    </div>
+  </footer>
+
+  <script src="i18n.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

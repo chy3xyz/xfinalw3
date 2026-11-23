@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1086" height="1088" viewBox="0 0 1086 1088">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0a8"/>
+      <stop offset="0.18" stop-color="#d99a35"/>
+      <stop offset="0.48" stop-color="#ffe08a"/>
+      <stop offset="0.72" stop-color="#a86618"/>
+      <stop offset="1" stop-color="#f8d46c"/>
+    </linearGradient>
+    <linearGradient id="goldText" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#fbe28a"/>
+      <stop offset="0.3" stop-color="#b87522"/>
+      <stop offset="0.58" stop-color="#f1c45e"/>
+      <stop offset="1" stop-color="#8b5015"/>
+    </linearGradient>
+    <radialGradient id="bg" cx="50%" cy="52%" r="72%">
+      <stop offset="0" stop-color="#10104b"/>
+      <stop offset="0.52" stop-color="#080a35"/>
+      <stop offset="1" stop-color="#02051d"/>
+    </radialGradient>
+    <linearGradient id="violet" x1="0" x2="1">
+      <stop offset="0" stop-color="#6f39d9" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#d884ff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#8d46ef" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1086" height="1088" fill="url(#bg)"/>
+
+  <!-- Subtle horizon glow -->
+  <ellipse cx="543" cy="657" rx="430" ry="55" fill="#b85cff" opacity=".12" filter="url(#softGlow)"/>
+  <rect x="85" y="650" width="916" height="5" rx="2.5" fill="url(#violet)" filter="url(#glow)"/>
+
+  <!-- Decorative particles -->
+  <g fill="#f8d979">
+    <circle cx="32" cy="620" r="2"/><circle cx="52" cy="555" r="1.5"/>
+    <circle cx="150" cy="635" r="1.4"/><circle cx="264" cy="401" r="1.1"/>
+    <circle cx="950" cy="448" r="1.5"/><circle cx="1000" cy="605" r="2"/>
+    <circle cx="1049" cy="537" r="1.2"/><circle cx="910" cy="590" r="1.2"/>
+    <circle cx="113" cy="470" r="1.2"/><circle cx="75" cy="648" r="1.4"/>
+  </g>
+
+  <!-- Main monogram: stylized A + N + X -->
+  <g fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- outer A / arch -->
+    <path d="M185 661 L431 307 Q505 199 579 307 L854 661"
+          stroke-width="42"/>
+    <!-- left foot / A cross structure -->
+    <path d="M185 661 L342 661 L389 584"
+          stroke-width="42"/>
+    <!-- inner N -->
+    <path d="M401 652 L401 405 L594 652 L594 405"
+          stroke-width="42"/>
+    <!-- X -->
+    <path d="M615 405 L820 661" stroke-width="42"/>
+    <path d="M824 405 L627 652" stroke-width="42"/>
+  </g>
+
+  <!-- Bright highlight accents -->
+  <g fill="none" stroke="#fff0b0" stroke-linecap="round" opacity=".72">
+    <path d="M185 661 L431 307" stroke-width="4"/>
+    <path d="M431 307 Q505 199 579 307" stroke-width="4"/>
+    <path d="M824 405 L627 652" stroke-width="3"/>
+  </g>
+
+  <!-- Logo wordmark -->
+  <text x="543" y="820"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="118"
+        font-weight="600"
+        letter-spacing="-4"
+        fill="url(#goldText)"
+        stroke="#6e3e12"
+        stroke-width="1.2"
+        paint-order="stroke">
+    Aethernex
+  </text>
+
+  <!-- Fine baseline glow -->
+  <rect x="145" y="846" width="796" height="2" rx="1" fill="#b86bff" opacity=".24" filter="url(#glow)"/>
+</svg>

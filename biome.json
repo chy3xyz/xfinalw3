@@ -16,14 +16,18 @@
         "noExplicitAny": "off",
         "noDoubleEquals": "off",
         "noGlobalIsNan": "off",
-        "noShadowRestrictedNames": "off"
+        "noShadowRestrictedNames": "off",
+        "noEmptyInterface": "off",
+        "noAssignInExpressions": "off"
       },
       "correctness": {
         "noUnusedImports": "off",
-        "noSelfAssign": "off"
+        "noSelfAssign": "off",
+        "noInnerDeclarations": "off"
       },
       "a11y": {
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off"
       },
       "style": {
         "noUselessElse": "off",
@@ -36,7 +40,9 @@
         "noInferrableTypes": "off",
         "useExportType": "off",
         "noParameterAssign": "off",
-        "noVar": "off"
+        "noVar": "off",
+        "noNonNullAssertion": "off",
+        "useSelfClosingElements": "off"
       },
       "complexity": {
         "noForEach": "off",
@@ -76,7 +82,14 @@
       ".superpowers",
       "docs",
       "**/static/app.css",
-      "**/deployedContracts.ts"
+      "**/deployedContracts.ts",
+      "packages/landing",
+      "vendor",
+      "generated",
+      "**/.output",
+      "**/.vinxi",
+      "**/.vercel",
+      "**/dist"
     ]
   }
 }
