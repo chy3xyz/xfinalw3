@@ -156,3 +156,4 @@ Wave3: [docs/deploy] || [env matrix] || [optional Docker/CI smoke]
 ## 10. 修订记录
 
 - 2026-11-21：初稿；用户确认 D + 三波方案。
+- 2026-11-23：Wave 3 落地 — `DEPLOY_BUN.md`、`ENV_MATRIX.md`、`HEALTH.md`、归档 `DEPLOY_STATIC`、Docker 草图、CI prod smoke。

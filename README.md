@@ -109,8 +109,12 @@ xfinalw3/
 ## Documentation
 
 - **[dev.md](./dev.md)** - Detailed development guide
-- **[docs/DEPLOY_LOCAL.md](./docs/DEPLOY_LOCAL.md)** - Local deployment guide
-- **[docs/ANVIL_SETUP.md](./docs/ANVIL_SETUP.md)** - Anvil setup guide
+- **[docs/DEPLOY_BUN.md](./docs/DEPLOY_BUN.md)** - Production deploy (`adapter-bun`)
+- **[docs/ENV_MATRIX.md](./docs/ENV_MATRIX.md)** - Environment variables
+- **[docs/HEALTH.md](./docs/HEALTH.md)** - Health-check ports / paths
+- **[docs/DEPLOY_LOCAL.md](./docs/DEPLOY_LOCAL.md)** - Local Anvil / contracts
+- **[docs/ANVIL_SETUP.md](./docs/ANVIL_SETUP.md)** - Anvil setup
+- **[docs/DEPLOY_STATIC.md](./docs/DEPLOY_STATIC.md)** - Archived static/Nginx notes
 
 ## Example Contract
 

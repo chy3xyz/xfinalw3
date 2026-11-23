@@ -1,137 +1,51 @@
-# SvelteKit Frontend
+# SvelteKit Frontend（`@w3s/sveltekit`）
 
-使用 SvelteKit 构建的 Web3 前端应用，功能与 NextJS 版本相同。
-
-## 功能特性
-
-- ✅ SvelteKit + TypeScript
-- ✅ Wagmi + Reown AppKit 集成（原生 Svelte 支持）
-- ✅ TailwindCSS 样式
-- ✅ 合约交互（读取和写入）
-- ✅ Debug Contracts 页面
-- ✅ Block Explorer 页面
-- ✅ 响应式设计
+SvelteKit 3 + Svelte 5 + `@sveltejs/adapter-bun` 的 Web3 前端。合约交互请使用脚手架 stores（`createScaffoldReadContractStore` / `createScaffoldWriteContractStore` / `createScaffoldEventHistoryStore`）。
 
 ## 快速开始
 
-### 安装依赖
-
-在项目根目录运行：
+在**仓库根目录**：
 
 ```bash
 bun install
+cp packages/sveltekit/.env.example packages/sveltekit/.env
+# 编辑 VITE_PROJECT_ID / VITE_ALCHEMY_API_KEY
+
+bun start          # 开发 → http://localhost:5173
 ```
 
-### 配置环境变量
+需本地链时另开终端：`bun chain` → `bun deploy:local`。
 
-创建 `.env` 文件（参考 `.env.example`）：
+## 生产
 
 ```bash
-cd packages/sveltekit
-cp .env.example .env
+# 根目录；需已设置生产环境变量（见 docs/ENV_MATRIX.md）
+bun run build
+bun start:prod     # bun ./build → 默认 :3000
 ```
 
-编辑 `.env` 文件，设置你的 Reown AppKit Project ID：
+完整说明：[docs/DEPLOY_BUN.md](../../docs/DEPLOY_BUN.md)。
 
-```env
-VITE_PROJECT_ID=your-project-id-here
-```
+## 包内脚本
 
-**获取 Project ID**：访问 [Reown Dashboard](https://dashboard.reown.com) 创建新项目并获取 Project ID。
+| 脚本 | 说明 |
+|------|------|
+| `bun run dev` | Vite 开发服务器 |
+| `bun run build` | CSS + `bun --bun vite build`（adapter-bun） |
+| `bun run start` | `bun ./build` 生产进程 |
+| `bun run check` | `svelte-check` |
+| `bun run preview` | vite preview（验收以 `start` / `start:prod` 为准） |
 
-### 运行开发服务器
+根目录推荐：`bun start` / `bun run build` / `bun start:prod`。
 
-从项目根目录运行：
+## 环境变量
 
-```bash
-bun sveltekit
-```
-
-或者直接进入 sveltekit 目录：
-
-```bash
-cd packages/sveltekit
-bun dev
-```
-
-访问 `http://localhost:5173` 查看应用。
-
-## 项目结构
-
-```
-packages/sveltekit/
-├── src/
-│   ├── lib/
-│   │   ├── components/      # 可复用组件
-│   │   ├── config/         # Wagmi 配置
-│   │   ├── stores/         # Svelte stores
-│   │   └── utils/          # 工具函数
-│   ├── routes/             # 页面路由
-│   │   ├── +layout.svelte  # 布局组件
-│   │   ├── +page.svelte    # 首页
-│   │   ├── debug/          # Debug 页面
-│   │   └── blockexplorer/  # Block Explorer 页面
-│   └── app.css             # 全局样式
-├── scaffold.config.ts      # 项目配置
-└── package.json
-```
-
-## 可用命令
-
-- `bun sveltekit` - 启动开发服务器
-- `bun sveltekit:build` - 构建生产版本
-- `bun sveltekit:preview` - 预览生产构建
+见 `.env.example` 与 [docs/ENV_MATRIX.md](../../docs/ENV_MATRIX.md)。生产缺少 `VITE_PROJECT_ID` / `VITE_ALCHEMY_API_KEY` 会 fail-fast。
 
 ## 配置
 
-编辑 `scaffold.config.ts` 来配置目标网络和其他设置。
+编辑 `scaffold.config.ts`（目标网络、polling 等）。
 
-## AppKit 集成
+## AppKit
 
-本项目使用 [Reown AppKit](https://docs.reown.com/appkit)（原 WalletConnect AppKit）来替代 RainbowKit，因为 AppKit 原生支持 Svelte。
-
-### 使用 AppKit Web Components
-
-AppKit 提供了 Web Components，可以直接在 Svelte 模板中使用：
-
-```svelte
-<!-- 连接钱包按钮 -->
-<appkit-button />
-
-<!-- 其他可用的组件 -->
-<appkit-connect-button />
-<appkit-account-button />
-<appkit-network-button />
-```
-
-### 程序化调用
-
-你也可以通过 AppKit 实例程序化地打开模态框：
-
-```svelte
-<script lang="ts">
-  import { appKit } from '$lib/appkit';
-
-  function openModal() {
-    appKit?.open();
-  }
-
-  function openConnectModal() {
-    appKit?.open({ view: 'Connect' });
-  }
-</script>
-
-<button on:click={openModal}>打开钱包</button>
-```
-
-## 与 NextJS 版本的差异
-
-- 使用 SvelteKit 的路由系统（基于文件系统）
-- 使用 Svelte stores 而不是 React hooks
-- 使用 `@tanstack/svelte-query` 而不是 `@tanstack/react-query`
-- 使用 Reown AppKit 而不是 RainbowKit（原生 Svelte 支持）
-- 使用 Vite 而不是 Next.js 的构建系统
-
-## 更多信息
-
-查看 [SvelteKit 文档](https://kit.svelte.dev) 了解更多信息。
+使用 [Reown AppKit](https://docs.reown.com/appkit)（WalletConnect）。模板中可用 `<appkit-button />` 等 Web Components。

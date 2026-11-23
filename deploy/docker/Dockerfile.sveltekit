@@ -1,0 +1,29 @@
+# Sketch: production dApp with Bun + adapter-bun.
+# Build from monorepo root: docker build -f deploy/docker/Dockerfile.sveltekit .
+
+FROM oven/bun:1.4.5 AS build
+WORKDIR /app
+COPY package.json bun.lock ./
+COPY packages/sveltekit/package.json packages/sveltekit/
+COPY packages/foundry/package.json packages/foundry/
+COPY packages/cron/package.json packages/cron/
+COPY packages/indexer/package.json packages/indexer/
+RUN bun install --frozen-lockfile
+COPY . .
+# Provide build-time public env (override in CI/CD):
+ARG VITE_PROJECT_ID=placeholder
+ARG VITE_ALCHEMY_API_KEY=placeholder
+ARG PUBLIC_APP_URL=http://localhost:3000
+ENV VITE_PROJECT_ID=$VITE_PROJECT_ID \
+    VITE_ALCHEMY_API_KEY=$VITE_ALCHEMY_API_KEY \
+    PUBLIC_APP_URL=$PUBLIC_APP_URL
+RUN bun run build
+
+FROM oven/bun:1.4.5-slim AS runtime
+WORKDIR /app
+ENV NODE_ENV=production PORT=3000
+COPY --from=build /app/packages/sveltekit/package.json ./
+COPY --from=build /app/packages/sveltekit/build ./build
+COPY --from=build /app/node_modules ./node_modules
+EXPOSE 3000
+CMD ["bun", "./build"]

@@ -45,4 +45,30 @@ jobs:
         run: bun --filter @w3s/sveltekit check
 
       - name: SvelteKit build
+        env:
+          VITE_PROJECT_ID: ci-placeholder
+          VITE_ALCHEMY_API_KEY: ci-placeholder
+          PUBLIC_APP_URL: http://127.0.0.1:3000
         run: bun --filter @w3s/sveltekit build
+
+      - name: SvelteKit prod smoke (curl /)
+        env:
+          VITE_PROJECT_ID: ci-placeholder
+          VITE_ALCHEMY_API_KEY: ci-placeholder
+          PUBLIC_APP_URL: http://127.0.0.1:3000
+          ORIGIN: http://127.0.0.1:3000
+          PORT: "3000"
+        run: |
+          bun --filter @w3s/sveltekit start &
+          pid=$!
+          cleanup() { kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true; }
+          trap cleanup EXIT
+          for i in $(seq 1 45); do
+            if curl -sf -o /dev/null http://127.0.0.1:3000/; then
+              echo "smoke ok"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "smoke failed: server did not become ready"
+          exit 1

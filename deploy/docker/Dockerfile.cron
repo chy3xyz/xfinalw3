@@ -1,0 +1,12 @@
+# Sketch: cron worker. Build from monorepo root.
+
+FROM oven/bun:1.4.5
+WORKDIR /app
+COPY package.json bun.lock ./
+COPY packages/cron/package.json packages/cron/
+RUN bun install --frozen-lockfile --filter @w3s/cron
+COPY packages/cron packages/cron
+ENV CRON_WRITE_ENABLED=false CRON_HEALTH_PORT=3001
+EXPOSE 3001
+WORKDIR /app/packages/cron
+CMD ["bun", "run", "src/index.ts"]

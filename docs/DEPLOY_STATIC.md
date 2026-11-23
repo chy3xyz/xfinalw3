@@ -1,11 +1,13 @@
-# SvelteKit 静态网站部署指南
+# SvelteKit 静态网站部署指南（已归档）
+
+> **归档：** 当前生产路径是 Bun + `@sveltejs/adapter-bun`。请改用 **[DEPLOY_BUN.md](./DEPLOY_BUN.md)**。  
+> 下文保留 adapter-static / Nginx 历史步骤，命令（如 `bun sveltekit:build`）可能已失效。
 
 本指南说明如何将 SvelteKit 应用打包成静态网站并部署到 Nginx。
 
 ## 前置要求
 
-- Node.js >= 20.18.3
-- Bun (推荐) 或 npm/yarn
+- Bun >= 1.4.0（历史文档曾写 Node；仓库已 Bun-only）
 - Nginx (用于部署)
 
 ## 构建步骤
