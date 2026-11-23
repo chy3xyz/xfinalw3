@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "lib": ["ES2022"],
+    "types": ["bun-types"],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowJs": true,
@@ -18,4 +19,3 @@
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
-

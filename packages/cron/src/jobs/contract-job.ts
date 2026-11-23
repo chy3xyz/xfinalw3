@@ -1,58 +1,80 @@
-import { createWalletClient, http, createPublicClient, type Address, type Chain } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { foundry } from "viem/chains";
-import { logger } from "../utils/logger.js";
-import type { ContractConfig } from "../types/config.js";
+import {
+  http,
+  type Address,
+  type Chain,
+  createPublicClient,
+  createWalletClient
+} from "viem"
+import { privateKeyToAccount } from "viem/accounts"
+import { foundry } from "viem/chains"
+import { writesEnabled } from "../health.js"
+import type { ContractConfig } from "../types/config.js"
+import { logger } from "../utils/logger.js"
 
-// 示例合约 ABI（根据你的实际合约修改）
-const EXAMPLE_CONTRACT_ABI = [
+const COUNTER_ABI = [
   {
-    inputs: [],
-    name: "getValue",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    type: "function",
+    name: "getCount",
     stateMutability: "view",
-    type: "function",
+    inputs: [],
+    outputs: [{ type: "uint256" }]
   },
   {
-    inputs: [{ internalType: "uint256", name: "_value", type: "uint256" }],
-    name: "setValue",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
+    name: "setCount",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "newCount", type: "uint256" }],
+    outputs: []
   },
-] as const;
+  {
+    type: "function",
+    name: "increment",
+    stateMutability: "nonpayable",
+    inputs: [],
+    outputs: []
+  }
+] as const
+
+const CHAIN_BY_ID: Record<number, Chain> = {
+  31337: foundry
+}
 
 export class ContractJob {
-  private walletClient;
-  private publicClient;
-  private account;
-  private contractAddress: Address;
-  private chain: Chain;
+  private walletClient
+  private publicClient
+  private account
+  private contractAddress: Address
+  private chain: Chain
 
   constructor(config: ContractConfig) {
-    // 从私钥创建账户
-    this.account = privateKeyToAccount(config.privateKey);
+    if (!process.env.CONTRACT_ADDRESS) {
+      logger.error("CONTRACT_ADDRESS environment variable is required")
+      process.exit(1)
+    }
 
-    // 根据 chainId 选择链（默认使用 foundry）
-    this.chain = config.chainId === 31337 ? foundry : foundry; // 可以根据需要扩展
+    this.account = privateKeyToAccount(config.privateKey)
 
-    // 创建公共客户端（用于读取）
+    const chain = CHAIN_BY_ID[config.chainId]
+    if (!chain) {
+      logger.error(`Unsupported chainId: ${config.chainId}`)
+      process.exit(1)
+    }
+    this.chain = chain
+
     this.publicClient = createPublicClient({
       chain: this.chain,
-      transport: http(config.rpcUrl),
-    });
+      transport: http(config.rpcUrl)
+    })
 
-    // 创建钱包客户端（用于写入）
     this.walletClient = createWalletClient({
       account: this.account,
       chain: this.chain,
-      transport: http(config.rpcUrl),
-    });
+      transport: http(config.rpcUrl)
+    })
 
-    // 合约地址（从环境变量或配置中获取）
-    this.contractAddress = (process.env.CONTRACT_ADDRESS as Address) || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    this.contractAddress = process.env.CONTRACT_ADDRESS as Address
 
-    logger.info(`Initialized ContractJob for contract: ${this.contractAddress}`);
+    logger.info(`Initialized ContractJob for contract: ${this.contractAddress}`)
   }
 
   /**
@@ -60,18 +82,20 @@ export class ContractJob {
    */
   async execute() {
     try {
-      // 1. 读取合约数据
-      const value = await this.readContractData();
-      logger.info(`Current contract value: ${value}`);
+      const value = await this.readContractData()
+      logger.info(`Current contract value: ${value}`)
 
-      // 2. 写入合约数据（示例：如果值小于某个阈值，则更新）
       if (value < 100n) {
-        await this.writeContractData(100n);
-        logger.info("Updated contract value to 100");
+        if (!writesEnabled()) {
+          logger.info("Write skipped (CRON_WRITE_ENABLED is not true)")
+        } else {
+          await this.writeContractData(100n)
+          logger.info("Updated contract value to 100")
+        }
       }
     } catch (error) {
-      logger.error("Error in execute:", error);
-      throw error;
+      logger.error("Error in execute:", error)
+      throw error
     }
   }
 
@@ -82,14 +106,14 @@ export class ContractJob {
     try {
       const value = await this.publicClient.readContract({
         address: this.contractAddress,
-        abi: EXAMPLE_CONTRACT_ABI,
-        functionName: "getValue",
-      });
+        abi: COUNTER_ABI,
+        functionName: "getCount"
+      })
 
-      return value as bigint;
+      return value as bigint
     } catch (error) {
-      logger.error("Error reading contract:", error);
-      throw error;
+      logger.error("Error reading contract:", error)
+      throw error
     }
   }
 
@@ -97,32 +121,36 @@ export class ContractJob {
    * 写入合约数据
    */
   async writeContractData(newValue: bigint): Promise<string> {
+    if (!writesEnabled()) {
+      logger.warn(
+        "Write blocked: set CRON_WRITE_ENABLED=true to allow chain writes"
+      )
+      return ""
+    }
+
     try {
-      // 1. 模拟交易以估算 gas
       const { request } = await this.publicClient.simulateContract({
         account: this.account,
         address: this.contractAddress,
-        abi: EXAMPLE_CONTRACT_ABI,
-        functionName: "setValue",
-        args: [newValue],
-      });
+        abi: COUNTER_ABI,
+        functionName: "setCount",
+        args: [newValue]
+      })
 
-      // 2. 发送交易
-      const hash = await this.walletClient.writeContract(request);
+      const hash = await this.walletClient.writeContract(request)
 
-      logger.info(`Transaction sent: ${hash}`);
+      logger.info(`Transaction sent: ${hash}`)
 
-      // 3. 等待交易确认
       const receipt = await this.publicClient.waitForTransactionReceipt({
-        hash,
-      });
+        hash
+      })
 
-      logger.info(`Transaction confirmed in block: ${receipt.blockNumber}`);
+      logger.info(`Transaction confirmed in block: ${receipt.blockNumber}`)
 
-      return hash;
+      return hash
     } catch (error) {
-      logger.error("Error writing contract:", error);
-      throw error;
+      logger.error("Error writing contract:", error)
+      throw error
     }
   }
 
@@ -131,14 +159,11 @@ export class ContractJob {
    */
   async periodicRead() {
     try {
-      const value = await this.readContractData();
-      logger.info(`Periodic read - Current value: ${value}`);
-
-      // 可以在这里添加更多的读取逻辑
-      // 例如：检查余额、检查状态等
+      const value = await this.readContractData()
+      logger.info(`Periodic read - Current value: ${value}`)
     } catch (error) {
-      logger.error("Error in periodic read:", error);
-      throw error;
+      logger.error("Error in periodic read:", error)
+      throw error
     }
   }
 
@@ -147,15 +172,11 @@ export class ContractJob {
    */
   async dailyTask() {
     try {
-      logger.info("Executing daily task...");
-
-      // 示例：每日重置或更新某些值
-      // await this.writeContractData(0n);
-
-      logger.info("Daily task completed");
+      logger.info("Executing daily task...")
+      logger.info("Daily task completed")
     } catch (error) {
-      logger.error("Error in daily task:", error);
-      throw error;
+      logger.error("Error in daily task:", error)
+      throw error
     }
   }
 
@@ -165,13 +186,12 @@ export class ContractJob {
   async getBalance(): Promise<bigint> {
     try {
       const balance = await this.publicClient.getBalance({
-        address: this.account.address,
-      });
-      return balance;
+        address: this.account.address
+      })
+      return balance
     } catch (error) {
-      logger.error("Error getting balance:", error);
-      throw error;
+      logger.error("Error getting balance:", error)
+      throw error
     }
   }
 }
-

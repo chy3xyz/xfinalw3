@@ -16,11 +16,23 @@ fork: setup-anvil-wallet
 	anvil --fork-url ${FORK_URL} --chain-id 31337
 
 # Deploy the contracts
+# Localhost keeps --skip-simulation (anvil). Live networks simulate by default.
+# Escape hatch: SKIP_SIMULATION=1 make deploy RPC_URL=...
 deploy:
 	@if [ ! -f "$(DEPLOY_SCRIPT)" ]; then 		echo "Error: Deploy script '$(DEPLOY_SCRIPT)' not found"; 		exit 1; 	fi
 	@echo "🔨 Compiling contracts..."
 	@forge build
-	@if [ "$(RPC_URL)" = "localhost" ]; then 		if [ "$(ETH_KEYSTORE_ACCOUNT)" = "scaffold-eth-default" ]; then 			forge script $(DEPLOY_SCRIPT) --rpc-url localhost --password localhost --broadcast --ffi --skip-simulation --slow; 		else 			forge script $(DEPLOY_SCRIPT) --rpc-url localhost --broadcast --ffi --skip-simulation --slow; 		fi 	else 		forge script $(DEPLOY_SCRIPT) --rpc-url $(RPC_URL) --broadcast --ffi --skip-simulation --slow; 	fi
+	@if [ "$(RPC_URL)" = "localhost" ]; then \
+		if [ "$(ETH_KEYSTORE_ACCOUNT)" = "scaffold-eth-default" ]; then \
+			forge script $(DEPLOY_SCRIPT) --rpc-url localhost --password localhost --broadcast --ffi --skip-simulation --slow; \
+		else \
+			forge script $(DEPLOY_SCRIPT) --rpc-url localhost --broadcast --ffi --skip-simulation --slow; \
+		fi; \
+	elif [ "$(SKIP_SIMULATION)" = "1" ]; then \
+		forge script $(DEPLOY_SCRIPT) --rpc-url $(RPC_URL) --broadcast --ffi --skip-simulation --slow; \
+	else \
+		forge script $(DEPLOY_SCRIPT) --rpc-url $(RPC_URL) --broadcast --ffi --slow; \
+	fi
 
 # Deploy and generate ABIs
 deploy-and-generate-abis: deploy generate-abis 

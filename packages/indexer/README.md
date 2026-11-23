@@ -78,8 +78,12 @@ packages/indexer/
 API 服务器默认运行在 `http://localhost:42069`。
 
 - `GET /graphql` - GraphQL 端点（自动生成）
-- `GET /health` - 健康检查
+- `GET /health` - 健康检查（无合约配置时返回 `degraded` / HTTP 503，不是恒 `ok`）
 - `GET /count` - 示例端点（需要根据你的 schema 更新）
+
+### 生产安全说明
+
+`/graphql` **默认无鉴权**。生产环境请在前面加 API 网关 / 反向代理鉴权与限流，不要把 GraphQL 裸露到公网。
 
 ## 配置
 

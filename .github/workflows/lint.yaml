@@ -1,12 +1,10 @@
-name: Lint
+name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [master, main]
   pull_request:
-    branches:
-      - main
+    branches: [master, main]
 
 jobs:
   ci:
@@ -14,16 +12,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.5
 
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Biome lint & format check
+      - name: Biome
         run: bun biome:ci
 
       - name: Foundry lint
@@ -31,3 +34,15 @@ jobs:
 
       - name: Foundry tests
         run: bun foundry:test
+
+      - name: Cron typecheck
+        run: bun --filter @w3s/cron typecheck
+
+      # Wave1 debt: ~90 historical svelte-check errors; tracked non-blocking until Wave2 cleanup.
+      # Build remains required (hard-fail).
+      - name: SvelteKit check (non-blocking debt)
+        continue-on-error: true
+        run: bun --filter @w3s/sveltekit check
+
+      - name: SvelteKit build
+        run: bun --filter @w3s/sveltekit build

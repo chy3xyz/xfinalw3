@@ -2,8 +2,8 @@
 cache/
 out/
 
-# Ignores development broadcast logs
-/broadcast/*/31337/
+# Broadcast logs (all networks — do not commit deployment transcripts)
+/broadcast/
 /broadcast/**/dry-run/
 
 # Docs

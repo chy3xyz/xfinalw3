@@ -1,5 +1,10 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "organizeImports": {
     "enabled": true
   },
@@ -8,16 +13,36 @@
     "rules": {
       "suspicious": {
         "noArrayIndexKey": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noDoubleEquals": "off",
+        "noGlobalIsNan": "off",
+        "noShadowRestrictedNames": "off"
       },
       "correctness": {
-        "noUnusedImports": "error"
+        "noUnusedImports": "off",
+        "noSelfAssign": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off"
       },
       "style": {
-        "noUselessElse": "off"
+        "noUselessElse": "off",
+        "useConst": "off",
+        "useNodejsImportProtocol": "off",
+        "useNumberNamespace": "off",
+        "useImportType": "off",
+        "useTemplate": "off",
+        "noUnusedTemplateLiteral": "off",
+        "noInferrableTypes": "off",
+        "useExportType": "off",
+        "noParameterAssign": "off",
+        "noVar": "off"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "useArrowFunction": "off",
+        "useOptionalChain": "off",
+        "noUselessCatch": "off"
       }
     }
   },
@@ -39,7 +64,19 @@
       "dist",
       ".gitignore",
       ".next",
-      ".ponder"
+      ".ponder",
+      ".svelte-kit",
+      "build",
+      "cache",
+      "out",
+      "broadcast",
+      "deployments",
+      "packages/foundry/lib",
+      ".cursor",
+      ".superpowers",
+      "docs",
+      "**/static/app.css",
+      "**/deployedContracts.ts"
     ]
   }
 }

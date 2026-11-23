@@ -1,31 +1,55 @@
-import { db } from "ponder:api";
-import schema from "ponder:schema";
-import { Hono } from "hono";
-import { count, desc, eq, graphql, or, replaceBigInts } from "ponder";
-import { formatEther, getAddress } from "viem";
+import { db } from "ponder:api"
+import schema from "ponder:schema"
+import { Hono } from "hono"
+import { graphql } from "ponder"
+import { getAddress } from "viem"
 
-const app = new Hono();
+const app = new Hono()
 
-// Enable GraphQL endpoint
-app.use("/graphql", graphql({ db, schema }));
+/**
+ * Keep in sync with `contracts` keys in ponder.config.ts.
+ * Empty = scaffold stub (not indexing on-chain data yet).
+ */
+const CONTRACTS_CONFIGURED = 0
 
-// Example: Get total count
+app.use("/graphql", graphql({ db, schema }))
+
 app.get("/count", async (c) => {
-  // This is a placeholder - update based on your schema
-  return c.text("0");
-});
+  return c.text("0")
+})
 
-// Example: Get count by address
 app.get("/count/:address", async (c) => {
-  const account = getAddress(c.req.param("address"));
-  // This is a placeholder - update based on your schema
-  return c.text("0");
-});
+  const account = getAddress(c.req.param("address"))
+  void account
+  return c.text("0")
+})
 
-// Health check endpoint
+/**
+ * Honest health — not always ok.
+ * No configured contracts → degraded / ready:false (HTTP 503).
+ */
 app.get("/health", async (c) => {
-  return c.json({ status: "ok" });
-});
+  const dbOk = Boolean(db) && Boolean(schema)
+  const ready = CONTRACTS_CONFIGURED > 0 && dbOk
+  const status = ready
+    ? "ok"
+    : CONTRACTS_CONFIGURED === 0
+      ? "degraded"
+      : "error"
 
-export default app;
+  return c.json(
+    {
+      status,
+      ready,
+      contractsConfigured: CONTRACTS_CONFIGURED,
+      db: dbOk ? "up" : "down",
+      note:
+        CONTRACTS_CONFIGURED === 0
+          ? "No contracts in ponder.config.ts — indexer is a scaffold stub"
+          : undefined
+    },
+    ready ? 200 : 503
+  )
+})
 
+export default app

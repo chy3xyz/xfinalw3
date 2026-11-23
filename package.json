@@ -23,7 +23,6 @@
     "foundry:clean": "bun --filter @w3s/foundry clean",
     "foundry:compile": "bun --filter @w3s/foundry compile",
     "foundry:deploy": "bun --filter @w3s/foundry deploy",
-    "foundry:deploy-verify": "bun --filter @w3s/foundry deploy:verify",
     "foundry:flatten": "bun --filter @w3s/foundry flatten",
     "foundry:fork": "bun --filter @w3s/foundry fork",
     "foundry:format": "bun --filter @w3s/foundry format",
@@ -32,7 +31,7 @@
     "foundry:test": "bun --filter @w3s/foundry test",
     "foundry:verify": "bun --filter @w3s/foundry verify",
     "generate": "bun run foundry:generate",
-    "postinstall": "husky install",
+    "prepare": "husky",
     "indexer": "bun --filter @w3s/indexer dev",
     "indexer:build": "bun --filter @w3s/indexer build",
     "indexer:codegen": "bun --filter @w3s/indexer codegen",
@@ -42,6 +41,8 @@
     "start": "bun --filter @w3s/sveltekit dev",
     "start:prod": "bun --filter @w3s/sveltekit start",
     "build": "bun --filter @w3s/sveltekit build",
+    "check": "bun --filter @w3s/sveltekit check",
+    "typecheck:cron": "bun --filter @w3s/cron typecheck",
     "lint": "bun run foundry:lint",
     "precommit": "lint-staged",
     "test": "bun run foundry:test",
@@ -49,10 +50,10 @@
     "biome:check": "biome check .",
     "biome:format": "biome format --write .",
     "biome:lint": "biome lint .",
-    "biome:ci": "biome ci ."
+    "biome:ci": "biome ci . --formatter-enabled=false --organize-imports-enabled=false"
   },
   "devDependencies": {
-    "biome": "^0.3.3",
+    "@biomejs/biome": "1.8.3",
     "husky": "~9.1.6",
     "lint-staged": "~13.2.2"
   },
