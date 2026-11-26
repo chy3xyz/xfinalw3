@@ -1,134 +1,90 @@
-import { readdirSync, existsSync } from "fs";
-import { join } from "path";
-import { spawnSync, spawn } from "child_process";
-import readline from "readline";
-import { fileURLToPath } from "url";
+#!/usr/bin/env bun
+import readline from "readline"
+import { fileURLToPath } from "url"
+import {
+  assertValidKeystoreName,
+  createEncryptedKeystore,
+  keystoresDir,
+  listKeystoreNames
+} from "./keystoreUtils.js"
 
 async function selectOrCreateKeystore() {
-  // Create readline interface only when function is called
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout,
-  });
-
-  const keystorePath = join(process.env.HOME, ".foundry", "keystores");
+    output: process.stdout
+  })
 
   try {
-    const keystores = existsSync(keystorePath)
-      ? readdirSync(keystorePath).filter(
-          (keystore) => keystore !== "scaffold-eth-default"
-        )
-      : [];
+    const keystores = listKeystoreNames()
 
     if (keystores.length === 0) {
       console.log(
-        "\n❌ No keystores found in ~/.foundry/keystores, please select 0 to create a new keystore"
-      );
+        `\n❌ No keystores in ${keystoresDir()} — select 0 to create a new one.`
+      )
     }
 
-    console.log("\n🔑 Available keystores:");
-    console.log("0. Create new keystore");
-
-    keystores.map((keystore, index) => {
-      console.log(`${index + 1}. ${keystore}`);
-
-      return { keystore };
-    });
+    console.log("\n🔑 Available keystores:")
+    console.log("0. Create new keystore")
+    keystores.forEach((keystore, index) => {
+      console.log(`${index + 1}. ${keystore}`)
+    })
 
     const answer = await new Promise((resolve) => {
       rl.question(
         "\nSelect a keystore or create new (enter number): ",
         resolve
-      );
-    });
+      )
+    })
 
-    const selection = parseInt(answer);
+    const selection = parseInt(answer, 10)
 
     if (selection === 0) {
-      const newWalletResult = spawnSync("cast", ["wallet", "new"], {
-        encoding: "utf-8",
-      });
+      const rawName = await new Promise((resolve) => {
+        rl.question("\nEnter name for new keystore: ", resolve)
+      })
+      rl.close()
 
-      if (newWalletResult.error || newWalletResult.status !== 0) {
-        console.error(
-          "\n❌ Error generating new wallet:",
-          newWalletResult.stderr || newWalletResult.error
-        );
-        process.exit(1);
-      }
-
-      const privateKey = newWalletResult.stdout
-        .split("\n")
-        .find((line) => line.includes("Private key:"))
-        ?.split(":")[1]
-        ?.trim();
-
-      if (!privateKey) {
-        console.error("\n❌ Could not extract private key from output");
-        process.exit(1);
-      }
-
-      const keystoreName = await new Promise((resolve) => {
-        rl.question("\nEnter name for new keystore: ", resolve);
-      });
-
-      // Close readline before spawning process with inherited stdio
-      rl.close();
-
-      return new Promise((resolve, reject) => {
-        const importProcess = spawn(
-          "cast",
-          ["wallet", "import", keystoreName, "--private-key", privateKey],
-          {
-            stdio: "inherit",
-          }
-        );
-
-        importProcess.on("close", (code) => {
-          if (code === 0) {
-            console.log(
-              "\n💰 Fund the address and re-run the deploy command to use this keystore."
-            );
-            console.log(
-              `\nTIP: Use \`bun account\` and select \`${keystoreName}\` keystore to check if the address is funded.`
-            );
-            process.exit(0);
-          } else {
-            console.error("\n❌ Error importing keystore");
-            reject(new Error("Import failed"));
-          }
-        });
-      });
+      const keystoreName = assertValidKeystoreName(rawName)
+      console.log(
+        `\n🔐 Creating encrypted keystore (private key never on argv)…\n`
+      )
+      await createEncryptedKeystore(keystoreName)
+      console.log(
+        "\n💰 Fund the address and re-run the deploy command to use this keystore."
+      )
+      console.log(
+        `\nTIP: Use \`bun account\` and select \`${keystoreName}\` to check balances.`
+      )
+      process.exit(0)
     }
 
     if (isNaN(selection) || selection < 1 || selection > keystores.length) {
-      console.error("\n❌ Invalid selection");
-      process.exit(1);
+      console.error("\n❌ Invalid selection")
+      process.exit(1)
     }
 
-    const selectedKeystore = keystores[selection - 1];
-    // Close readline before returning
-    rl.close();
-    return selectedKeystore;
+    return keystores[selection - 1]
   } catch (error) {
-    console.error("\n❌ Error reading keystores:", error);
-    process.exit(1);
+    console.error("\n❌ Error:", error?.message || error)
+    process.exit(1)
   } finally {
-    // Ensure readline is closed
-    rl.close();
+    try {
+      rl.close()
+    } catch {
+      /* already closed */
+    }
   }
 }
 
-// Run the selection if this script is called directly
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  selectKeystore()
+  selectOrCreateKeystore()
     .then((keystore) => {
-      console.log("\n🔑 Selected keystore:", keystore);
+      if (keystore) console.log("\n🔑 Selected keystore:", keystore)
     })
     .catch((error) => {
-      console.error(error);
-      process.exit(1);
-    });
+      console.error(error)
+      process.exit(1)
+    })
 }
 
-export { selectOrCreateKeystore };
+export { selectOrCreateKeystore }

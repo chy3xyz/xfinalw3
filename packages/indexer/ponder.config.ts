@@ -1,4 +1,4 @@
-import { createConfig } from "ponder"
+import { createConfig } from "bponder"
 
 const rpc = process.env.PONDER_RPC_URL_1
 if (!rpc) {

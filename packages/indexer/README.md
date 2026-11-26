@@ -2,20 +2,18 @@
 
 使用 [bponder](https://github.com/chy3xyz/bponder)（Bun-native Ponder fork）构建的区块链索引器，支持自定义 API 端点。
 
-- **运行时**：Bun 执行 [bponder](https://github.com/chy3xyz/bponder) `v0.18.9` CLI（`vendor/bponder`，由 `bun run bponder:install` 拉取并构建）。Release 二进制同时安装到 `~/.bponder/bin`（`codegen` 可用；`start`/`dev` 在 0.18.9 上有已知问题，故脚本走源码 CLI）。
-- **库 API**：`import … from "ponder"`（`ponder@0.18.9`；npm 尚未发布独立 `bponder` 包名）
+- **运行时**：`bponder@1.0.8`（npm）；`bun run bponder:install` 可选安装 Release 二进制，并可从本地 `../bponder` 同步 `vendor/bponder` 供源码 CLI 调试。
+- **库 API**：`import … from "bponder"`；虚拟模块 `bponder:registry` / `bponder:schema` / `bponder:api`。
 
 ## 快速开始
 
-### 1. 安装依赖与 bponder CLI
+### 1. 安装依赖
 
 ```bash
 # 仓库根目录
 bun install
-bun run bponder:install   # 安装 ~/.bponder/bin/bponder@0.18.9
+bun run bponder:install   # 可选：Release CLI + vendor 同步
 ```
-
-确保 `~/.bponder/bin` 在 `PATH` 中（脚本也会自动回退到该路径）。
 
 ### 2. 配置环境变量
 
@@ -26,6 +24,7 @@ cp .env.example .env
 
 ```env
 PONDER_RPC_URL_1=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY
+DATABASE_SCHEMA=xfinalw3
 ```
 
 ### 3. 生成类型定义
@@ -36,7 +35,7 @@ PONDER_RPC_URL_1=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY
 bun indexer:codegen
 ```
 
-生成 `ponder:registry` / `ponder:api` / `ponder:schema` 等虚拟模块类型。
+生成 `bponder:registry` / `bponder:api` / `bponder:schema` 等虚拟模块类型。
 
 ### 4. 运行索引器
 
@@ -58,7 +57,7 @@ bun dev
 - `bun indexer:codegen` — 生成类型
 - `bun indexer:db` — 数据库管理
 - `bun indexer:serve` — 仅 API（不索引）
-- `bun run bponder:install` — 安装 / 校验 bponder CLI
+- `bun run bponder:install` — 安装 Release CLI / 同步 vendor
 
 ## 项目结构
 

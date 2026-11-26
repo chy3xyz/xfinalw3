@@ -1,79 +1,56 @@
-import { spawn } from "child_process";
-import { createInterface } from "readline";
-import { config } from "dotenv";
-import { stdin as input, stdout as output } from "process";
-config();
-
+#!/usr/bin/env bun
 /**
- * Prompts the user for input with the given question
- * @param {string} question - The question to ask the user
- * @returns {Promise<string>} - The user's response
+ * Import an existing private key into an encrypted Foundry keystore.
+ * Uses `cast wallet import <name> --interactive` (PK entered at hidden prompt, not argv).
  */
-function prompt(question) {
-  const rl = createInterface({
-    input,
-    output,
-  });
+import {
+  assertValidKeystoreName,
+  importKeystoreInteractive,
+  keystoreExists,
+  keystoresDir,
+  printKeystoreSecurityTips,
+  ask
+} from "./keystoreUtils.js"
 
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      rl.close();
-      resolve(answer);
-    });
-  });
-}
+async function main() {
+  if (process.argv.includes("--help") || process.argv.includes("-h")) {
+    console.log(`
+Usage: bun run account:import [keystore-name]
 
-/**
- * Main function to import an account
- */
-async function importAccount() {
+Imports a private key via interactive prompt into ${keystoresDir()}.
+Does not accept --private-key on the command line (avoids ps(1) leakage).
+
+Options:
+  --help, -h    Show this help
+
+Env:
+  FOUNDRY_KEYSTORE_DIR   Override keystore directory
+`)
+    printKeystoreSecurityTips()
+    process.exit(0)
+  }
+
   try {
-    // Get account name from command line args or prompt user
-    let accountName = process.argv[2];
+    let accountName = process.argv.slice(2).find((a) => !a.startsWith("-"))
     if (!accountName) {
-      accountName = await prompt("\nEnter account name (e.g., my-keystore): ");
-
-      if (!accountName.trim()) {
-        console.error("\n❌ Account name cannot be empty");
-        process.exit(1);
-      }
+      accountName = (await ask("\nEnter account name (e.g., my-keystore): ")).trim()
     }
 
-    // Check if account name is scaffold-eth-default
-    if (accountName === "scaffold-eth-default") {
-      console.error(
-        "\n❌ Cannot use 'scaffold-eth-default' as account name. This is reserved for local development."
-      );
-      process.exit(1);
+    accountName = assertValidKeystoreName(accountName)
+
+    if (keystoreExists(accountName)) {
+      console.error(`\n❌ Keystore '${accountName}' already exists`)
+      process.exit(1)
     }
 
-    const importProcess = spawn(
-      "cast",
-      ["wallet", "import", accountName, "--interactive"],
-      {
-        stdio: "inherit",
-        shell: true,
-        cwd: process.cwd(),
-      }
-    );
-
-    // Handle process completion
-    importProcess.on("close", (code) => {
-      if (code === 0) {
-        process.exit(0);
-      } else {
-        console.error(`\n❌ Failed to import account. Error code: ${code}`);
-        process.exit(1);
-      }
-    });
+    console.log(`\n📥 Importing into '${accountName}' (interactive private-key + password prompts)…\n`)
+    await importKeystoreInteractive(accountName)
+    console.log(`\n✅ Account '${accountName}' imported.`)
+    printKeystoreSecurityTips()
   } catch (error) {
-    console.error("\n❌ Error importing account:", error);
-    process.exit(1);
+    console.error("\n❌", error?.message || error)
+    process.exit(1)
   }
 }
 
-// Run the import function
-importAccount().catch((error) => {
-  console.error("\n❌ Unexpected error:", error);
-  process.exit(1);
-});
+main()

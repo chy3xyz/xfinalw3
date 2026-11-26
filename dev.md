@@ -265,10 +265,14 @@ The framework uses shadcn-svelte for UI components:
 Located in `packages/foundry/scripts-js/`:
 
 - `generateTsAbis.js` - Generate TypeScript contract definitions
-- `generateKeystore.js` - Generate keystore files
-- `deployLocal.js` - Local deployment helper
-- `importAccount.js` - Import account from private key
-- `revealPK.js` - Reveal private key from keystore
+- `keystoreUtils.js` - Shared keystore path / validation / safe `cast` helpers
+- `generateKeystore.js` - Create encrypted keystore (`cast wallet new`, PK never on argv)
+- `importAccount.js` - Import via `--interactive` prompt
+- `revealPK.js` - Reveal PK (requires `--yes-print`)
+- `showAddress.js` / `listKeystores.js` - Address / list without revealing PK
+- `deployLocal.js` - Local deployment helper (Anvil keystore, not raw `--private-key`)
+
+See `docs/DEPLOYER_KEYSTORE.md`.
 
 ### Usage
 
@@ -277,8 +281,11 @@ Located in `packages/foundry/scripts-js/`:
 cd packages/foundry
 bun scripts-js/generateTsAbis.js
 
-# Generate keystore
-bun scripts-js/generateKeystore.js
+# Keystore (preferred)
+bun account:generate
+bun account:import
+bun account:address
+bun account:reveal-pk --yes-print   # dangerous
 ```
 
 ### Deployment Scripts

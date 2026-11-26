@@ -8,9 +8,17 @@ import {
 } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
-import { format } from "prettier"
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+/** Light indent without pulling in prettier (~12MB). */
+function formatTs(source) {
+  return `${source
+    .replace(/^\s*\n/, "")
+    .split("\n")
+    .map((line) => line.replace(/^\s{4}/, ""))
+    .join("\n")
+    .trim()}\n`
+}
 
 const generatedContractComment = `
 /**
@@ -317,9 +325,7 @@ function main() {
   // Generate for Solid dApp
   writeFileSync(
     `${SOLID_TARGET_DIR}deployedContracts.ts`,
-    format(fileTemplate("./contractTypes.js"), {
-      parser: "typescript"
-    })
+    formatTs(fileTemplate("./contractTypes.js"))
   )
 
   console.log(

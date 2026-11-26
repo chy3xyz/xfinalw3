@@ -15,10 +15,44 @@
  * bun packages/foundry/scripts-js/deployLocal.js
  */
 
-import { execSync } from "child_process";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { execSync, spawnSync } from "child_process"
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
+import { ensureKeystoresDir, keystoreExists } from "./keystoreUtils.js"
+
+/** Public Anvil account #0 — localhost only. Never use on a live network. */
+const ANVIL0_PRIVATE_KEY =
+  "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+const LOCAL_DEPLOY_ACCOUNT = "scaffold-eth-anvil0"
+
+/**
+ * One-time import of the public Anvil #0 key into an encrypted keystore so
+ * subsequent forge deploys use --account (not --private-key on argv).
+ * Residual: the well-known Anvil PK appears on argv only during this setup.
+ */
+function ensureLocalDeployKeystore() {
+  ensureKeystoresDir()
+  if (keystoreExists(LOCAL_DEPLOY_ACCOUNT)) return
+  const r = spawnSync(
+    "cast",
+    [
+      "wallet",
+      "import",
+      LOCAL_DEPLOY_ACCOUNT,
+      "--private-key",
+      ANVIL0_PRIVATE_KEY,
+      "--unsafe-password",
+      "localhost"
+    ],
+    { stdio: "inherit", shell: false }
+  )
+  if (r.status !== 0) {
+    throw new Error(
+      `failed to create local keystore '${LOCAL_DEPLOY_ACCOUNT}' (exit ${r.status})`
+    )
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,19 +118,34 @@ function deployContracts() {
       stdio: "inherit",
     });
 
-    // Use Anvil's default account private key (first account)
-    // Anvil default account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-    // Private key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-    const privateKey =
-      "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-    execSync(
-      `forge script script/DeployLocal.s.sol:DeployLocalScript --rpc-url http://localhost:8545 --broadcast --skip-simulation --slow --private-key ${privateKey}`,
+    // Prefer encrypted keystore over --private-key on argv (ps leakage).
+    // The Anvil #0 key is public; we still keep it out of the forge argv when possible.
+    ensureLocalDeployKeystore()
+    const result = spawnSync(
+      "forge",
+      [
+        "script",
+        "script/DeployLocal.s.sol:DeployLocalScript",
+        "--rpc-url",
+        "http://localhost:8545",
+        "--broadcast",
+        "--skip-simulation",
+        "--slow",
+        "--account",
+        LOCAL_DEPLOY_ACCOUNT,
+        "--password",
+        "localhost"
+      ],
       {
         cwd: FOUNDRY_DIR,
         stdio: "inherit",
+        shell: false
       }
-    );
-    console.log("✅ Contracts deployed successfully");
+    )
+    if (result.status !== 0) {
+      throw new Error(`forge script failed (exit ${result.status})`)
+    }
+    console.log("✅ Contracts deployed successfully")
   } catch (error) {
     console.error("❌ Deployment failed:", error.message);
     process.exit(1);

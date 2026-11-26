@@ -23,10 +23,12 @@
 | `ALCHEMY_API_KEY` | 非本地部署时 | 见 `foundry.toml` RPC |
 | `ETHERSCAN_API_KEY` | 验证合约时 | `bun verify` |
 | `LOCALHOST_KEYSTORE_ACCOUNT` | 可选 | 默认 `scaffold-eth-default`（仅本地） |
+| `FOUNDRY_KEYSTORE_DIR` | 可选 | 覆盖默认 `~/.foundry/keystores` |
 | `SKIP_SIMULATION` | 可选 | 设为 `1` 时 live deploy 跳过模拟（危险，默认关闭） |
 | `RPC_URL` / `DEPLOY_SCRIPT` | 部署时 | Makefile / parseArgs 使用 |
 
-密钥在 `~/.foundry/keystores`；`account:reveal-pk` 必须带 `--yes-print`。
+密钥在 `~/.foundry/keystores`（或 `FOUNDRY_KEYSTORE_DIR`）。  
+生成/导入不把私钥放进 argv；`account:reveal-pk` 必须带 `--yes-print`。详见 [DEPLOYER_KEYSTORE.md](./DEPLOYER_KEYSTORE.md)。
 
 ## Indexer（`packages/indexer` / bponder）
 

@@ -1,5 +1,5 @@
-import { ponder } from "ponder:registry"
-import { meta } from "ponder:schema"
+import { ponder } from "bponder:registry"
+import { meta } from "bponder:schema"
 
 ponder.on("Heartbeat:block", async ({ event, context }) => {
   await context.db

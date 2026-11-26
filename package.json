@@ -4,13 +4,22 @@
   "description": "A modern Web3 development framework for building dApps on Ethereum",
   "private": true,
   "packageManager": "bun@1.4.5",
-  "workspaces": [
-    "packages/foundry",
-    "packages/solid",
-    "packages/indexer",
-    "packages/job",
-    "packages/landing"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/foundry",
+      "packages/solid",
+      "packages/indexer",
+      "packages/job",
+      "packages/landing"
+    ],
+    "catalog": {
+      "viem": "2.41.2",
+      "hono": "4.10.7",
+      "typescript": "5.9.2",
+      "@types/node": "20.17.50",
+      "bun-types": "1.4.5"
+    }
+  },
   "scripts": {
     "account": "bun run foundry:account",
     "account:generate": "bun run foundry:generate",
@@ -38,8 +47,10 @@
     "foundry:verify": "bun --filter @w3s/foundry verify",
     "generate": "bun run foundry:generate",
     "prepare": "husky",
-    "bponder:install": "bash ./scripts/install-bponder.sh",
+    "bponder:install": "BPONDER_SKIP_VENDOR=1 bash ./scripts/install-bponder.sh",
+    "bponder:vendor": "BPONDER_SKIP_VENDOR=0 bash ./scripts/install-bponder.sh",
     "slim:disk": "bash ./scripts/slim-disk.sh",
+    "slim:disk:full": "REMOVE_VENDOR=1 SKIP_SVELTEKIT=1 bash ./scripts/slim-disk.sh",
     "indexer": "bun --filter @w3s/indexer dev",
     "indexer:build": "bun --filter @w3s/indexer build",
     "indexer:codegen": "bun --filter @w3s/indexer codegen",
@@ -53,7 +64,6 @@
     "start:svelte": "echo 'SvelteKit is optional and excluded from workspaces (disk). Re-add packages/sveltekit to workspaces + bun install to use.' >&2; exit 1",
     "build:svelte": "bun run start:svelte",
     "landing": "bun --filter @w3s/landing start",
-    "slim:disk:full": "SKIP_SVELTEKIT=1 bash ./scripts/slim-disk.sh",
     "typecheck:cron": "bun --filter @w3s/cron typecheck",
     "lint": "bun run foundry:lint",
     "precommit": "lint-staged",
@@ -64,10 +74,17 @@
     "biome:lint": "biome lint .",
     "biome:ci": "biome ci . --formatter-enabled=false --organize-imports-enabled=false"
   },
+  "overrides": {
+    "viem": "2.41.2",
+    "hono": "4.10.7",
+    "typescript": "5.9.2",
+    "graphql": "16.15.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
     "husky": "~9.1.6",
-    "lint-staged": "~13.2.2"
+    "lint-staged": "~13.2.2",
+    "typescript": "catalog:"
   },
   "engines": {
     "bun": ">=1.4.0"

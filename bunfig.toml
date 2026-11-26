@@ -1,0 +1,12 @@
+# Bun monorepo — maximize hoisted node_modules contribution, minimize disk.
+# Docs: https://bun.com/docs/runtime/bunfig
+
+[install]
+# Single root node_modules (workspace packages contribute here)
+linker = "hoisted"
+# Don't auto-install peer noise beyond what workspaces declare
+auto = false
+# Exact versions still come from bun.lock; ranges resolve once via catalog/overrides
+exact = false
+
+[install.scopes]

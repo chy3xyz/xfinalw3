@@ -6,7 +6,10 @@
     "account": "make account",
     "account:generate": "bun scripts-js/generateKeystore.js",
     "account:import": "bun scripts-js/importAccount.js",
+    "account:list": "bun scripts-js/listKeystores.js",
+    "account:address": "bun scripts-js/showAddress.js",
     "account:reveal-pk": "bun scripts-js/revealPK.js",
+    "test:keystore": "bun test scripts-js/keystoreUtils.test.js",
     "chain": "make chain",
     "clean": "forge clean",
     "compile": "make compile",
@@ -15,20 +18,16 @@
     "flatten": "make flatten",
     "fork": "make fork FORK_URL=${1:-mainnet}",
     "format": "make format",
-    "postinstall": "shx cp -n .env.example .env",
+    "postinstall": "bun -e \"import { copyFileSync, existsSync } from 'fs'; if (!existsSync('.env')) copyFileSync('.env.example', '.env')\"",
     "lint": "make lint",
     "test": "forge test",
     "verify": "make verify RPC_URL=${1:-localhost}"
   },
   "dependencies": {
-    "dotenv": "~16.3.1",
-    "envfile": "~6.18.0",
-    "ethers": "~5.7.1",
-    "prettier": "~2.8.8",
-    "qrcode": "~1.5.3",
-    "toml": "~3.0.0"
+    "toml": "~3.0.0",
+    "viem": "catalog:"
   },
-  "devDependencies": {
-    "shx": "^0.3.4"
+  "engines": {
+    "bun": ">=1.4.0"
   }
 }

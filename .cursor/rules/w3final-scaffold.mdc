@@ -35,6 +35,7 @@ The usual dev flow is:
   - `bun start:prod`
   - Network / WC: `packages/solid/scaffold.config.ts`
 - Do not treat Node/pnpm as prerequisites; package manager and runtime for the monorepo are Bun only.
+- Disk: root `bunfig.toml` uses hoisted `node_modules`; shared deps via `workspaces.catalog` (`viem`, `hono`, `typescript`, …). Prefer `catalog:` in package.json. Indexer uses npm `bponder` (default no vendor). See `docs/BUN_DISK.md` / `bun run slim:disk`.
 
 ## Smart Contract UI interactions guidelines (Solid / @wagmi/solid)
 Xfinalw3 Solid reads ABIs/addresses from `packages/solid/src/lib/contracts` (`deployedContracts.ts` + `externalContracts.ts`).

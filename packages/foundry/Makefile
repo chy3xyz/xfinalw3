@@ -2,9 +2,10 @@
 
 DEPLOY_SCRIPT ?= script/Deploy.s.sol
 
-# setup wallet for anvil
+# setup wallet for anvil (PUBLIC test key — localhost only; see docs/DEPLOYER_KEYSTORE.md)
 setup-anvil-wallet:
-	shx rm ~/.foundry/keystores/scaffold-eth-default 2>/dev/null; 	shx rm -rf broadcast/Deploy.s.sol/31337
+	rm -f ~/.foundry/keystores/scaffold-eth-default 2>/dev/null; rm -rf broadcast/Deploy.s.sol/31337
+	@# Anvil default key is public; --private-key on argv is acceptable only for this local account.
 	cast wallet import --private-key 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6 --unsafe-password 'localhost' scaffold-eth-default
 
 # Start local chain
@@ -57,13 +58,13 @@ compile:
 flatten:
 	forge flatten
 
-# Format code
+# Format code (forge only — JS uses Biome at repo root; avoids prettier in node_modules)
 format:
-	forge fmt && prettier --write ./scripts-js/**/*.js
+	forge fmt
 
 # Lint code
 lint:
-	forge fmt --check && prettier --check ./scripts-js/**/*.js
+	forge fmt --check
 
 # Run tests
 test:

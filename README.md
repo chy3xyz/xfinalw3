@@ -33,7 +33,7 @@ xfinalw3 is a Bun monorepo for shipping Ethereum dApps: Foundry contracts, Solid
 
 - [Bun](https://bun.sh) >= 1.4.0
 - [Foundry](https://book.getfoundry.sh/getting-started/installation) (forge, anvil)
-- [bponder](https://github.com/chy3xyz/bponder) CLI v0.18.9（`bun run bponder:install`）
+- [bponder](https://github.com/chy3xyz/bponder) `1.0.8`（`bun install`；可选 `bun run bponder:install`）
 - Git
 
 ### Installation
@@ -103,13 +103,13 @@ xfinalw3/
 - `bun start:prod` - Run Solid production server
 - `bun start:svelte` - Legacy SvelteKit dApp
 - `bun landing` - Framework site preview (`packages/landing` → :8931)
-- `bun run slim:disk` — prune `vendor/bponder` nests + clear Bun install cache（约可省数 GB）
-- `bun run slim:disk:full` — 同上并删掉遗留 `packages/sveltekit/node_modules`（Svelte 已不在 workspaces）
+- `bun run slim:disk` — 清嵌套缓存 + Bun cache；共享依赖靠根 `node_modules`（catalog + hoisted）
+- `bun run slim:disk:full` — 删除 `vendor/bponder` + sveltekit nests（索引器默认用 npm `bponder`）
 
 ### Other
 
 - `bun indexer` - Start bponder indexer
-- `bun run bponder:install` - Install bponder CLI (v0.18.9)
+- `bun run bponder:install` - Optional Release CLI + vendor sync (v1.0.8)
 - `bun cron` - Start cron jobs (Bun)
 
 ## Documentation
@@ -117,6 +117,8 @@ xfinalw3/
 - **[dev.md](./dev.md)** - Detailed development guide
 - **[docs/DEPLOY_BUN.md](./docs/DEPLOY_BUN.md)** - Production deploy (`adapter-bun`)
 - **[docs/ENV_MATRIX.md](./docs/ENV_MATRIX.md)** - Environment variables
+- **[docs/DEPLOYER_KEYSTORE.md](./docs/DEPLOYER_KEYSTORE.md)** - Deployer keystore / private-key hygiene
+- **[docs/BUN_DISK.md](./docs/BUN_DISK.md)** - Bun hoisted node_modules / catalog / slim disk
 - **[docs/HEALTH.md](./docs/HEALTH.md)** - Health-check ports / paths
 - **[docs/DEPLOY_LOCAL.md](./docs/DEPLOY_LOCAL.md)** - Local Anvil / contracts
 - **[docs/ANVIL_SETUP.md](./docs/ANVIL_SETUP.md)** - Anvil setup
