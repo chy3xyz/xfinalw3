@@ -23,9 +23,13 @@ cp .env.example .env
 ```
 
 ```env
-PONDER_RPC_URL_1=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY
+PONDER_RPC_URL_1=http://127.0.0.1:8545
+PONDER_CHAIN_ID=31337
 DATABASE_SCHEMA=xfinalw3
 ```
+
+本地默认索引 Anvil 上的 Counter（`CountUpdated` → `count_update` 表）+ Heartbeat。  
+生产设置 `BPONDER_ENV=production` 与 `GRAPHQL_API_KEY`（见 `docs/ENV_MATRIX.md`）。
 
 ### 3. 生成类型定义
 

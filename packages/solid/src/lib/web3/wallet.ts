@@ -19,11 +19,12 @@ import { formatEther, parseEther, parseUnits } from "viem"
 import { t } from "../i18n/index.js"
 import { notify } from "../stores/notify.js"
 import { walletStore } from "../stores/wallet.js"
-import { foundry, getPublicClient, localhost } from "./client.js"
+import { foundry, getPublicClient, localhost, resolveChain } from "./client.js"
 import {
   CHAIN_CONFIG,
   DEFAULT_CHAIN,
   EXPECTED_CHAIN_ID,
+  SUPPORTED_CHAINS,
   WALLETCONNECT_PROJECT_ID,
   config,
   walletConnectEnabled
@@ -35,19 +36,17 @@ export { walletStore } from "../stores/wallet.js"
 
 const STORAGE_KEY = "xfinalw3_wallet_address"
 
-const CHAIN_MAP: Record<number, Chain> = {
-  [foundry.id]: foundry,
-  [localhost.id]: localhost
-}
-
-const CHAIN_KEY_MAP: Record<number, keyof typeof CHAIN_CONFIG> = {
-  [foundry.id]: "foundry",
-  [localhost.id]: "localhost"
-}
+const CHAIN_MAP: Record<number, Chain> = Object.fromEntries(
+  [
+    ...SUPPORTED_CHAINS,
+    foundry,
+    localhost
+  ].map((c) => [c.id, c])
+)
 
 export function getChainDisplayName(chain: Chain): string {
-  const key = CHAIN_KEY_MAP[chain.id]
-  return (key && CHAIN_CONFIG[key]?.name) || chain.name
+  const named = Object.values(CHAIN_CONFIG).find((c) => c.id === chain.id)
+  return named?.name || chain.name
 }
 
 export async function ensureTargetChain(opts?: {
@@ -285,7 +284,7 @@ export function notifyTxSuccess(message: string) {
 }
 
 export async function getBlockNumber(): Promise<bigint> {
-  const chain = CHAIN_MAP[walletStore.currentChainId()] || DEFAULT_CHAIN
+  const chain = resolveChain(walletStore.currentChainId() ?? undefined)
   return BigInt(await getPublicClient(chain).getBlockNumber())
 }
 
@@ -294,16 +293,31 @@ export async function getEventLogs(opts: {
   event: AbiEvent
   fromBlock: bigint
   toBlock?: bigint | "latest"
-}): Promise<Array<{ args?: Record<string, unknown> }>> {
-  const chain = CHAIN_MAP[walletStore.currentChainId()] || DEFAULT_CHAIN
+}): Promise<
+  Array<{
+    args?: Record<string, unknown>
+    blockNumber?: bigint
+    transactionHash?: `0x${string}`
+    logIndex?: number
+  }>
+> {
+  const chain = resolveChain(walletStore.currentChainId() ?? undefined)
   const logs = await getPublicClient(chain).getLogs({
     address: opts.address,
     event: opts.event,
     fromBlock: opts.fromBlock,
     toBlock: opts.toBlock ?? "latest"
   } as never)
-  return logs as unknown as Array<{ args?: Record<string, unknown> }>
+  return logs as unknown as Array<{
+    args?: Record<string, unknown>
+    blockNumber?: bigint
+    transactionHash?: `0x${string}`
+    logIndex?: number
+  }>
 }
+
+/** @deprecated prefer resolveChain — kept for callers using CHAIN_MAP */
+export { CHAIN_MAP }
 
 let _listenersAttached = false
 

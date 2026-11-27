@@ -11,7 +11,12 @@
     "copy": "Copy",
     "copied": "Copied",
     "share": "Share",
+    "view": "View",
+    "loadFailed": "Failed to load",
     "scaffoldStub": "Scaffold surface — wire your contracts / indexer next. Layout and navigation stay."
+  },
+  "announce": {
+    "dismiss": "Dismiss"
   },
   "invite": {
     "title": "Invite friends",
@@ -193,6 +198,7 @@
       "portalTitle": "Xfinalw3 Admin",
       "groupOverview": "Overview",
       "menuDashboard": "Dashboard",
+      "menuCounts": "Count updates",
       "menuDebug": "Contract debug",
       "mainNav": "Admin navigation",
       "closeMenu": "Close menu",
@@ -227,6 +233,16 @@
       "title": "Operations dashboard",
       "lead": "Shell extracted from production MMM admin: cookie auth, roles, sidebar, ⌘K. Wire product routes under /mng and /admin/* on the indexer.",
       "session": "Session"
+    },
+    "counts": {
+      "title": "Indexed CountUpdated",
+      "lead": "Framework sample: GraphQL over bponder table count_update. Replace with your product resources.",
+      "loading": "Loading…",
+      "empty": "No rows yet — run bun chain && bun deploy:local, increment Counter, keep bun indexer running.",
+      "error": "Query failed",
+      "colCount": "newCount",
+      "colBlock": "block",
+      "colTime": "timestamp"
     }
   }
 }

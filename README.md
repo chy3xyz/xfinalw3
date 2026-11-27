@@ -60,12 +60,17 @@ bun run bponder:install
    bun deploy:local
    ```
 
-3. **Start frontend** (Terminal 3):
+3. **Start indexer** (Terminal 3):
+   ```bash
+   bun indexer
+   ```
+
+4. **Start frontend** (Terminal 4):
    ```bash
    bun start
    ```
 
-4. Visit `http://localhost:5173` and interact with your contracts!
+5. Visit `http://localhost:5173` — recipe also via `bun stack`.
 
 ## Project Structure
 

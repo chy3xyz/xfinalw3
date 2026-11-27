@@ -36,6 +36,8 @@ The usual dev flow is:
   - Network / WC: `packages/solid/scaffold.config.ts`
 - Do not treat Node/pnpm as prerequisites; package manager and runtime for the monorepo are Bun only.
 - Disk: root `bunfig.toml` uses hoisted `node_modules`; shared deps via `workspaces.catalog` (`viem`, `hono`, `typescript`, …). Prefer `catalog:` in package.json. Indexer uses npm `bponder` (default no vendor). See `docs/BUN_DISK.md` / `bun run slim:disk`.
+- CI covers Solid check/build + Foundry + indexer/job tests (not SvelteKit). Indexer sample: local Counter `CountUpdated` + Heartbeat. Prod security: GraphQL API key required; RPC deny unknown methods (see `runtimeEnv.ts`). Local recipe: `bun stack`.
+- Solid scaffold hooks: `useScaffoldReadContract` / `Write` / `Contract` / `EventHistory`. Multi-chain via `VITE_TARGET_CHAINS` + `VITE_RPC_URL_<id>`. Admin sample: `/mng/counts`.
 
 ## Smart Contract UI interactions guidelines (Solid / @wagmi/solid)
 Xfinalw3 Solid reads ABIs/addresses from `packages/solid/src/lib/contracts` (`deployedContracts.ts` + `externalContracts.ts`).

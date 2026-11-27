@@ -35,40 +35,24 @@ jobs:
       - name: Foundry tests
         run: bun foundry:test
 
+      - name: Foundry keystore unit tests
+        run: bun --filter @w3s/foundry test:keystore
+
+      - name: Indexer unit tests
+        run: bun --filter @w3s/indexer test
+
       - name: Cron typecheck
         run: bun --filter @w3s/cron typecheck
 
-      # Wave1 debt: ~90 historical svelte-check errors; tracked non-blocking until Wave2 cleanup.
-      # Build remains required (hard-fail).
-      - name: SvelteKit check (non-blocking debt)
-        continue-on-error: true
-        run: bun --filter @w3s/sveltekit check
+      - name: Solid typecheck
+        run: bun --filter @w3s/solid check
 
-      - name: SvelteKit build
-        env:
-          VITE_PROJECT_ID: ci-placeholder
-          VITE_ALCHEMY_API_KEY: ci-placeholder
-          PUBLIC_APP_URL: http://127.0.0.1:3000
-        run: bun --filter @w3s/sveltekit build
+      - name: Solid i18n check
+        run: bun --filter @w3s/solid i18n:check
 
-      - name: SvelteKit prod smoke (curl /)
+      - name: Solid build
         env:
+          VITE_WALLET_CONNECT_PROJECT_ID: ci-placeholder
           VITE_PROJECT_ID: ci-placeholder
-          VITE_ALCHEMY_API_KEY: ci-placeholder
-          PUBLIC_APP_URL: http://127.0.0.1:3000
-          ORIGIN: http://127.0.0.1:3000
-          PORT: "3000"
-        run: |
-          bun --filter @w3s/sveltekit start &
-          pid=$!
-          cleanup() { kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true; }
-          trap cleanup EXIT
-          for i in $(seq 1 45); do
-            if curl -sf -o /dev/null http://127.0.0.1:3000/; then
-              echo "smoke ok"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "smoke failed: server did not become ready"
-          exit 1
+          VITE_USE_RPC_PROXY: "0"
+        run: bun --filter @w3s/solid build

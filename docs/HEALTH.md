@@ -2,11 +2,11 @@
 
 | 服务 | 启动命令 | 默认地址 | 探活 | 成功语义 |
 |------|----------|----------|------|----------|
-| dApp | `bun start:prod` | `http://127.0.0.1:3000/` | `GET /` | `200`（页面可渲染；需正确 `VITE_*` / `ORIGIN`） |
-| Cron | `bun cron` | `http://127.0.0.1:3001/health` | `GET /health` | `{ "ok": true, "writesEnabled": boolean }` |
+| dApp (Solid / Vinxi) | `bun start` / `bun start:prod` | dev `:5173`；prod 见启动日志 | `GET /` | `200`（需正确 `VITE_*`） |
+| Cron (`packages/job` → `@w3s/cron`) | `bun cron` | `http://127.0.0.1:3001/health` | `GET /health` | `{ "ok": true, "writesEnabled": boolean }` |
 | Indexer (bponder) | `bun indexer` | `http://127.0.0.1:42069/health` | `GET /health` | 内置 liveness → `200` |
-| Indexer app ready | `bun indexer` | `http://127.0.0.1:42069/app/ready` | `GET /app/ready` | 自定义就绪：`ready: true` → 200；否则 **503** |
-| Indexer RPC proxy | `bun indexer` | `http://127.0.0.1:42069/rpc` | `POST /rpc` | 需 `RPC_GATEWAY_UPSTREAM`；本机 `GET /rpc/__stats` |
+| Indexer app ready | `bun indexer` | `http://127.0.0.1:42069/app/ready` | `GET /app/ready` | `ready: true` → 200；否则 **503** |
+| Indexer RPC proxy | `bun indexer` | `http://127.0.0.1:42069/rpc` | `POST /rpc` | 需上游；本机 `GET /rpc/__stats` |
 
 > Bun-native bponder 保留 `/health` `/ready` `/status` `/metrics` `/v1/*`。应用级就绪请用 `/app/ready`。
 

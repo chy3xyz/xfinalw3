@@ -37,9 +37,15 @@ async function post<T>(
   query: string,
   variables?: Record<string, unknown>
 ): Promise<T> {
+  const apiKey = (
+    import.meta.env.VITE_GRAPHQL_API_KEY as string | undefined
+  )?.trim()
   const init: RequestInit = {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: {
+      "content-type": "application/json",
+      ...(apiKey ? { "x-api-key": apiKey } : {})
+    },
     body: JSON.stringify({ query, variables })
   }
   let res: Response

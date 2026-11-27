@@ -11,7 +11,12 @@
     "copy": "复制",
     "copied": "已复制",
     "share": "分享",
+    "view": "查看",
+    "loadFailed": "加载失败",
     "scaffoldStub": "脚手架占位页 — 接下来接你的合约 / 索引。布局与导航可直接留用。"
+  },
+  "announce": {
+    "dismiss": "关闭"
   },
   "invite": {
     "title": "邀请好友",
@@ -193,6 +198,7 @@
       "portalTitle": "Xfinalw3 后台",
       "groupOverview": "总览",
       "menuDashboard": "控制台",
+      "menuCounts": "计数更新",
       "menuDebug": "合约调试",
       "mainNav": "后台导航",
       "closeMenu": "关闭菜单",
@@ -227,6 +233,16 @@
       "title": "运营控制台",
       "lead": "从 MMM 生产后台抽出的壳：Cookie 会话、角色、侧栏、⌘K。在 /mng 与 indexer /admin/* 上接业务路由。",
       "session": "会话"
+    },
+    "counts": {
+      "title": "已索引 CountUpdated",
+      "lead": "框架样板：经 GraphQL 读 bponder 表 count_update。业务资源照此 fork。",
+      "loading": "加载中…",
+      "empty": "暂无数据 — 先 bun chain && bun deploy:local，点 Increment，并保持 bun indexer 运行。",
+      "error": "查询失败",
+      "colCount": "newCount",
+      "colBlock": "区块",
+      "colTime": "时间戳"
     }
   }
 }

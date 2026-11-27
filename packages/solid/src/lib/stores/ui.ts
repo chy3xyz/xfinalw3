@@ -36,6 +36,12 @@ const MENU_GROUPS: MenuGroup[] = [
         icon: "🏠"
       },
       {
+        name: "counts",
+        path: "/mng/counts",
+        titleKey: "admin.nav.menuCounts",
+        icon: "🔢"
+      },
+      {
         name: "debug",
         path: "/debug",
         titleKey: "admin.nav.menuDebug",

@@ -20,6 +20,7 @@ import {
   requestCost
 } from "./rpcGatewayCore"
 import { apiRpcUrl } from "./runtime"
+import { rpcAllowUnknownMethods } from "./runtimeEnv"
 
 function envNum(name: string, fallback: number): number {
   const raw = process.env[name]
@@ -91,8 +92,8 @@ export function mountRpcProxy(app: Hono): void {
   const BURST = envNum("RPC_GATEWAY_BURST", 600)
   const MAX_BATCH = envNum("RPC_GATEWAY_MAX_BATCH", 50)
   const MAX_BODY = envNum("RPC_GATEWAY_MAX_BODY", 256 * 1024)
-  const ALLOW_UNKNOWN =
-    String(process.env.RPC_GATEWAY_ALLOW_UNKNOWN ?? "1") !== "0"
+  // Prod default: deny unknown methods. Dev default: allow. Override with 0|1.
+  const ALLOW_UNKNOWN = rpcAllowUnknownMethods()
   const TIMEOUT_MS = envNum("RPC_GATEWAY_TIMEOUT_MS", 20_000)
   const STATS_SEC = envNum("RPC_GATEWAY_STATS_SEC", 300)
 

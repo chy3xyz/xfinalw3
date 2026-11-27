@@ -24,7 +24,7 @@ SolidStart + **`@wagmi/solid`**。应用壳与后台模式抽取自生产 MMM So
 | Admin REST | `src/lib/api.ts` → 同源 `/api/*`（代理到 indexer） |
 | Indexer GQL | `src/lib/indexer/client.ts` |
 | Wallet | `src/lib/web3/*` |
-| Scaffold | `useScaffoldReadContract` / `useScaffoldWriteContract` |
+| Scaffold | `useScaffoldReadContract` / `Write` / `Contract` / `EventHistory` |
 | i18n | `en` + `zh-CN` |
 
 ## 命令
@@ -39,9 +39,11 @@ bun start            # :5173 — 用户端 / 后台 /mng
 ## Env
 
 - `VITE_WALLET_CONNECT_PROJECT_ID`
+- `VITE_TARGET_CHAINS` — 如 `foundry,sepolia`（默认 `foundry`）
+- `VITE_RPC_URL_<chainId>` / `VITE_RPC_URL` — 非本地链必需
 - `VITE_PONDER_PROXY` — 默认 `http://127.0.0.1:42069`（`/api`、`/rpc`、`/ponder` 代理）
-- `VITE_RPC_URL` — 覆盖 wagmi RPC；默认 `/api/rpc`（经 indexer 闸门转发）
 - `VITE_USE_RPC_PROXY=0` — 本地直连 Anvil `http://127.0.0.1:8545`
+- `VITE_GRAPHQL_API_KEY` — 与 indexer `GRAPHQL_API_KEY` 对齐时使用
 
 Indexer：`ADMIN_PASSWORD_SHA256`（登录 `/mng`）+ `RPC_GATEWAY_UPSTREAM`（`/rpc` 上游）。
 
@@ -51,6 +53,8 @@ Indexer：`ADMIN_PASSWORD_SHA256`（登录 `/mng`）+ `RPC_GATEWAY_UPSTREAM`（`
 import {
   useScaffoldReadContract,
   useScaffoldWriteContract,
+  useScaffoldEventHistory,
+  useScaffoldContract,
 } from "~/lib/scaffold"
 
 const count = useScaffoldReadContract<bigint>({
@@ -58,4 +62,11 @@ const count = useScaffoldReadContract<bigint>({
   functionName: "getCount",
   watch: true,
 })
+const logs = useScaffoldEventHistory({
+  contractName: "Counter",
+  eventName: "CountUpdated",
+  watch: true,
+})
 ```
+
+管理端样板：`/mng/counts`（GraphQL `countUpdates`）。

@@ -14,6 +14,7 @@ import { StatTile } from "~/components/ui/StatTile"
 import { ANNOUNCEMENTS, HOME_FEATURES } from "~/lib/config/appContent"
 import { useT } from "~/lib/i18n"
 import {
+  useScaffoldEventHistory,
   useScaffoldReadContract,
   useScaffoldWriteContract
 } from "~/lib/scaffold"
@@ -32,6 +33,13 @@ export default function HomePage() {
     enabled: () => Boolean(walletStore.walletAddress())
   })
   const writer = useScaffoldWriteContract({ contractName: "Counter" })
+  const events = useScaffoldEventHistory({
+    contractName: "Counter",
+    eventName: "CountUpdated",
+    blocksBack: 5_000,
+    watch: true,
+    enabled: () => Boolean(walletStore.walletAddress())
+  })
 
   return (
     <>
@@ -113,6 +121,23 @@ export default function HomePage() {
             </Button>
             <Show when={count.error()}>
               <p class="text-xs text-amber-300">{tr("home.counterHint")}</p>
+            </Show>
+            <Show when={(events.data() ?? []).length > 0}>
+              <div class="border-t border-void-edge/20 pt-2">
+                <p class="mb-1 text-[11px] uppercase tracking-wide text-ink-3">
+                  CountUpdated
+                </p>
+                <ul class="max-h-28 space-y-1 overflow-y-auto font-mono text-[11px] text-ink-2">
+                  <For each={(events.data() ?? []).slice(-5).reverse()}>
+                    {(ev) => (
+                      <li>
+                        #{ev.blockNumber?.toString() ?? "?"} →{" "}
+                        {String(ev.args?.newCount ?? "—")}
+                      </li>
+                    )}
+                  </For>
+                </ul>
+              </div>
             </Show>
           </Card>
         </Show>

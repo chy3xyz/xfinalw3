@@ -1,31 +1,65 @@
 import { walletConnect } from "@wagmi/connectors"
 import { http, createConfig } from "@wagmi/solid"
+import type { Chain } from "viem"
 import { foundry, localhost } from "viem/chains"
 import scaffoldConfig from "../../../scaffold.config.js"
 import { browserInjectedConnector } from "./injected.js"
 
-export const SUPPORTED_CHAINS = [foundry, localhost] as const
+/** Networks enabled for this scaffold build (from VITE_TARGET_CHAINS). */
+export const SUPPORTED_CHAINS = scaffoldConfig.targetNetworks as readonly Chain[]
 
-export const CHAIN_CONFIG = {
-  foundry: {
-    id: foundry.id,
-    name: "Foundry / Anvil",
-    rpcUrl:
-      scaffoldConfig.rpcOverrides?.[foundry.id] ?? "http://127.0.0.1:8545",
-    fallbackRpcs: [] as string[],
-    explorer: ""
-  },
-  localhost: {
-    id: localhost.id,
-    name: "Local EVM",
-    rpcUrl: "http://127.0.0.1:8545",
-    fallbackRpcs: [] as string[],
-    explorer: ""
+const fallbackLocal = [foundry, localhost] as const
+
+function buildChainConfig() {
+  const out: Record<
+    string,
+    {
+      id: number
+      name: string
+      rpcUrl: string
+      fallbackRpcs: string[]
+      explorer: string
+    }
+  > = {}
+  for (const chain of SUPPORTED_CHAINS) {
+    const key = chain.id === foundry.id ? "foundry" : chain.name.toLowerCase()
+    out[key] = {
+      id: chain.id,
+      name: chain.name,
+      rpcUrl:
+        scaffoldConfig.rpcOverrides?.[chain.id] ??
+        (chain.id === foundry.id || chain.id === localhost.id
+          ? "http://127.0.0.1:8545"
+          : ""),
+      fallbackRpcs: [],
+      explorer: chain.blockExplorers?.default?.url ?? ""
+    }
   }
-} as const
+  if (!out.foundry) {
+    out.foundry = {
+      id: foundry.id,
+      name: "Foundry / Anvil",
+      rpcUrl: "http://127.0.0.1:8545",
+      fallbackRpcs: [],
+      explorer: ""
+    }
+  }
+  if (!out.localhost) {
+    out.localhost = {
+      id: localhost.id,
+      name: "Local EVM",
+      rpcUrl: "http://127.0.0.1:8545",
+      fallbackRpcs: [],
+      explorer: ""
+    }
+  }
+  return out
+}
 
-export const DEFAULT_CHAIN = foundry
-export const EXPECTED_CHAIN_ID = foundry.id
+export const CHAIN_CONFIG = buildChainConfig()
+
+export const DEFAULT_CHAIN = SUPPORTED_CHAINS[0] ?? foundry
+export const EXPECTED_CHAIN_ID = DEFAULT_CHAIN.id
 
 export const WALLETCONNECT_PROJECT_ID =
   scaffoldConfig.walletConnectProjectId.trim()
@@ -57,11 +91,22 @@ function buildConnectors() {
   return list
 }
 
+const wagmiChains =
+  SUPPORTED_CHAINS.length > 0
+    ? ([...SUPPORTED_CHAINS] as [Chain, ...Chain[]])
+    : ([...fallbackLocal] as unknown as [Chain, ...Chain[]])
+
+const transports: Record<number, ReturnType<typeof http>> = {}
+for (const chain of wagmiChains) {
+  const rpc =
+    scaffoldConfig.rpcOverrides?.[chain.id] ||
+    CHAIN_CONFIG.foundry?.rpcUrl ||
+    "http://127.0.0.1:8545"
+  transports[chain.id] = http(rpc)
+}
+
 export const config = createConfig({
-  chains: [foundry, localhost],
+  chains: wagmiChains,
   connectors: buildConnectors(),
-  transports: {
-    [foundry.id]: http(CHAIN_CONFIG.foundry.rpcUrl),
-    [localhost.id]: http(CHAIN_CONFIG.localhost.rpcUrl)
-  }
+  transports
 })
