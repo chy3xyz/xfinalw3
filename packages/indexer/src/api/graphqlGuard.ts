@@ -10,8 +10,6 @@ import { createHash, timingSafeEqual } from "node:crypto"
 import type { Context, Next } from "hono"
 import { graphqlApiKeyRequired } from "./runtimeEnv"
 
-const GRAPHQL_API_KEY = process.env.GRAPHQL_API_KEY || ""
-
 /**
  * Word-boundary patterns for fields that must not be selected publicly.
  * Add entries when schema gains sensitive columns (signatures, secrets, …).
@@ -19,6 +17,14 @@ const GRAPHQL_API_KEY = process.env.GRAPHQL_API_KEY || ""
 export const SENSITIVE_GRAPHQL_FIELDS: readonly RegExp[] = [
   // scaffold: empty — product apps add e.g. /\bsigBuyer\b/
 ]
+
+export function configuredGraphqlApiKey(): string {
+  return process.env.GRAPHQL_API_KEY || ""
+}
+
+export function queryHasSensitiveField(queryText: string): boolean {
+  return SENSITIVE_GRAPHQL_FIELDS.some((re) => re.test(queryText))
+}
 
 function constantTimeEqual(a: string, b: string): boolean {
   return timingSafeEqual(
@@ -31,18 +37,19 @@ export async function graphqlGuard(c: Context, next: Next) {
   const url = new URL(c.req.url)
   if (url.pathname !== "/" && url.pathname !== "/graphql") return next()
 
+  const apiKey = configuredGraphqlApiKey()
   const requireKey = graphqlApiKeyRequired()
-  if (requireKey && !GRAPHQL_API_KEY) {
+  if (requireKey && !apiKey) {
     console.error(
       "[graphql-guard] GRAPHQL_API_KEY required in production (or set GRAPHQL_REQUIRE_API_KEY=0 to opt out)"
     )
     return c.json({ error: "graphql api key not configured" }, 503)
   }
 
-  if (GRAPHQL_API_KEY) {
+  if (apiKey) {
     const provided =
       c.req.header("x-api-key") ?? url.searchParams.get("api_key") ?? ""
-    if (!constantTimeEqual(provided, GRAPHQL_API_KEY)) {
+    if (!constantTimeEqual(provided, apiKey)) {
       return c.json({ error: "unauthorized" }, 401)
     }
   }
@@ -65,7 +72,7 @@ export async function graphqlGuard(c: Context, next: Next) {
       queryText = (body as { query: string }).query
     }
   }
-  if (SENSITIVE_GRAPHQL_FIELDS.some((re) => re.test(queryText))) {
+  if (queryHasSensitiveField(queryText)) {
     return c.json({ error: "field not allowed" }, 403)
   }
   return next()

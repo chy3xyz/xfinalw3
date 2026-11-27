@@ -20,17 +20,15 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import type { Context, Next } from "hono"
 import { Hono } from "hono"
 import { deleteCookie, getCookie, setCookie } from "hono/cookie"
+import {
+  type AdminRole,
+  ROLE_RANK,
+  parseAdminAccounts,
+  roleAtLeast
+} from "./adminRoles"
 
-export type AdminRole = "viewer" | "operator" | "owner"
-
-export const ROLE_RANK: Record<AdminRole, number> = {
-  viewer: 1,
-  operator: 2,
-  owner: 3
-}
-
-const isRole = (v: unknown): v is AdminRole =>
-  v === "viewer" || v === "operator" || v === "owner"
+export type { AdminRole }
+export { ROLE_RANK, roleAtLeast }
 
 const SESSION_COOKIE = process.env.ADMIN_SESSION_COOKIE || "xfinalw3_admin"
 const SESSION_TTL_SEC = 12 * 60 * 60
@@ -42,36 +40,7 @@ function constantTimeEqual(a: string, b: string): boolean {
   )
 }
 
-function parseAccountsConfig(): Map<string, { hash: string; role: AdminRole }> {
-  const accounts = new Map<string, { hash: string; role: AdminRole }>()
-  const user = process.env.ADMIN_USERNAME || "admin"
-  const hash = process.env.ADMIN_PASSWORD_SHA256 || ""
-  const roleEnv = process.env.ADMIN_ROLE
-  if (user && hash) {
-    accounts.set(user, {
-      hash: hash.toLowerCase(),
-      role: isRole(roleEnv) ? roleEnv : "owner"
-    })
-  }
-  for (const part of (process.env.ADMIN_ACCOUNTS || "").split(/[,;]/)) {
-    const item = part.trim()
-    if (!item) continue
-    const [name, h, role] = item.split(":")
-    if (!name || !h || !/^[0-9a-fA-F]{64}$/.test(h)) {
-      console.warn(
-        `[admin-auth] ADMIN_ACCOUNTS entry ignored (need name:sha256:role): ${item.slice(0, 24)}…`
-      )
-      continue
-    }
-    accounts.set(name, {
-      hash: h.toLowerCase(),
-      role: isRole(role) ? role : "viewer"
-    })
-  }
-  return accounts
-}
-
-const adminAccounts = parseAccountsConfig()
+const adminAccounts = parseAdminAccounts()
 console.warn(
   adminAccounts.size
     ? `[admin-auth] accounts: ${[...adminAccounts]
@@ -188,7 +157,7 @@ export async function requireAdmin(c: Context, next: Next) {
 export async function requireOperator(c: Context, next: Next) {
   const session = readSession(c)
   if (!session) return unauthorized(c)
-  if (ROLE_RANK[session.role] < ROLE_RANK.operator) {
+  if (!roleAtLeast(session.role, "operator")) {
     return forbidden(c, session.role, "operator")
   }
   await next()
@@ -202,7 +171,7 @@ export async function requireAdminOrKeeper(c: Context, next: Next) {
   }
   const session = readSession(c)
   if (!session) return unauthorized(c)
-  if (ROLE_RANK[session.role] < ROLE_RANK.operator) {
+  if (!roleAtLeast(session.role, "operator")) {
     return forbidden(c, session.role, "operator")
   }
   await next()
@@ -223,7 +192,7 @@ async function writeGuard(c: Context, next: Next) {
   if (c.req.path.startsWith("/internal/") && hasKeeperSecret(c)) return next()
   const session = readSession(c)
   if (!session) return unauthorized(c)
-  if (ROLE_RANK[session.role] < ROLE_RANK.operator) {
+  if (!roleAtLeast(session.role, "operator")) {
     return forbidden(c, session.role, "operator")
   }
   return next()

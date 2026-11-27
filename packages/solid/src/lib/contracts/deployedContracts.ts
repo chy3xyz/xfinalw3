@@ -4,68 +4,66 @@
  */
 import type { GenericContractsDeclaration } from "./contractTypes.js";
 
-const deployedContracts = {
-  31337: {
-    Counter: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      abi: [
-        {
-          type: "function",
-          name: "decrement",
-          inputs: [],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "getCount",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "increment",
-          inputs: [],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "setCount",
-          inputs: [
-            {
-              name: "newCount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "event",
-          name: "CountUpdated",
-          inputs: [
-            {
-              name: "newCount",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-      ],
-      inheritedFunctions: {},
-    },
+const deployedContracts = {31337:{
+  "Counter": {
+"address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+"abi": [
+  {
+    "type": "function",
+    "name": "decrement",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
-} as const;
+  {
+    "type": "function",
+    "name": "getCount",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "increment",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setCount",
+    "inputs": [
+      {
+        "name": "newCount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "CountUpdated",
+    "inputs": [
+      {
+        "name": "newCount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  }
+],
+"inheritedFunctions": {}
+  }
+},} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;

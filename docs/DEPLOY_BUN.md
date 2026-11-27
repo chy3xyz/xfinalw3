@@ -2,7 +2,7 @@
 
 本仓库生产路径是 **SolidStart + Vinxi**（`packages/solid` / `@w3s/solid`），由 Bun 构建并启动。
 
-> 旧的 SvelteKit + `adapter-bun` 路径已移出 workspaces；`docs/DEPLOY_STATIC.md` 仅作历史参考。
+> 生产路径是 **Solid 静态输出**（Vinxi `preset: static`）+ Bun 带安全头的静态服务器。旧 SvelteKit/`adapter-bun` 已移出 workspaces。
 
 ## 前置要求
 
@@ -54,8 +54,10 @@ bun run build
 ## 4. 启动生产服务
 
 ```bash
+bun run build
 bun start:prod
-# → bun --filter @w3s/solid start（vinxi start）
+# → scripts/serve-solid-static.ts（`.output/public` + CSP / nosniff / DENY）
+# 可选：bun --filter @w3s/solid start:vinxi
 ```
 
 开发：
@@ -63,6 +65,8 @@ bun start:prod
 ```bash
 bun start   # :5173
 ```
+
+静态托管（Netlify/Cloudflare）会读取 `packages/solid/public/_headers`。Caddy 草图见 `deploy/Caddyfile`。
 
 ### 同机辅助进程
 

@@ -11,6 +11,8 @@ Xfinalw3 local stack (4 terminals / panes):
 Optional:
   bun cron                     # @w3s/cron keepers (:3001 /health)
   bun landing                  # static site :8931
+  bun smoke                    # Anvil + deploy + solid CSP headers
+  bun probe                    # curl health of already-running services
 
 Env templates:
   packages/solid/.env.example
@@ -19,4 +21,5 @@ Env templates:
   packages/job/.env.example
 
 Docs: docs/DEPLOY_LOCAL.md  docs/ENV_MATRIX.md  docs/HEALTH.md
+      docs/API_STABILITY.md  SECURITY.md
 EOF

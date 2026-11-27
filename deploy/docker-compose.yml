@@ -1,0 +1,36 @@
+# Sketch: local/prod-ish stack (Anvil optional; use real RPC in prod).
+# Usage from repo root:
+#   docker compose -f deploy/docker-compose.yml up --build
+#
+# Secrets via env file — never commit real keys.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ponder
+      POSTGRES_PASSWORD: ponder
+      POSTGRES_DB: ponder
+    ports:
+      - "5432:5432"
+    volumes:
+      - ponder_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ponder -d ponder"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Host-run recommendation: bun indexer / bun start:prod on the machine.
+  # Containers below are placeholders — mount built artifacts or bake images.
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../packages/solid/.output/public:/srv:ro
+    depends_on:
+      - postgres
+
+volumes:
+  ponder_pg:

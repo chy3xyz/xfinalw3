@@ -41,11 +41,17 @@ jobs:
       - name: Indexer unit tests
         run: bun --filter @w3s/indexer test
 
+      - name: Cron unit tests
+        run: bun --filter @w3s/cron test
+
       - name: Cron typecheck
         run: bun --filter @w3s/cron typecheck
 
       - name: Solid typecheck
         run: bun --filter @w3s/solid check
+
+      - name: Solid unit tests
+        run: bun --filter @w3s/solid test
 
       - name: Solid i18n check
         run: bun --filter @w3s/solid i18n:check
@@ -56,3 +62,12 @@ jobs:
           VITE_PROJECT_ID: ci-placeholder
           VITE_USE_RPC_PROXY: "0"
         run: bun --filter @w3s/solid build
+
+      - name: Stack smoke (anvil + deploy + solid headers)
+        env:
+          SMOKE_INDEXER: "0"
+          SMOKE_SOLID: "1"
+          SKIP_DEPLOY: "0"
+          VITE_WALLET_CONNECT_PROJECT_ID: ci-placeholder
+          VITE_PROJECT_ID: ci-placeholder
+        run: bun smoke

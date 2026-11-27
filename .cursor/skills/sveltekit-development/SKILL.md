@@ -1,28 +1,32 @@
 ---
 name: sveltekit-development
-description: Handles SvelteKit frontend development workflows including starting dev server, building, contract interactions, and debugging. Use when developing the frontend, interacting with smart contracts, debugging UI issues, or working with Svelte components.
+description: LEGACY — SvelteKit is outside workspaces. Prefer Solid (`packages/solid`, bun start). Only use if packages/sveltekit is re-added to workspaces.
 ---
 
-# SvelteKit 前端开发工作流
+# ⚠️ Legacy：SvelteKit 前端（已移出 workspaces）
+
+**当前权威前端是 SolidStart + `@wagmi/solid`（`packages/solid`）。**
+
+```bash
+bun start          # Solid :5173
+bun run build && bun start:prod   # 静态 + 安全头
+```
+
+契约交互请用 `~/lib/scaffold` hooks，勿再按下列 SvelteKit 路径操作，除非你主动把 `packages/sveltekit` 加回 workspaces 并 `bun install`。
+
+---
+
+# SvelteKit 前端开发工作流（归档）
 
 ## 快速命令参考
 
 ### 开发流程
 
 ```bash
-# 1. 启动开发服务器
-bun start
-# 或
+# 仅在 sveltekit 重新纳入 workspaces 后：
 cd packages/sveltekit && bun dev
-
-# 2. 构建生产版本 (@sveltejs/adapter-bun)
-bun run build
-
-# 3. 运行生产服务 (Bun)
-bun start:prod
-
-# 4. 类型检查
-cd packages/sveltekit && bun run check
+bun --filter @w3s/sveltekit build
+bun --filter @w3s/sveltekit check
 ```
 
 ## 完整开发工作流

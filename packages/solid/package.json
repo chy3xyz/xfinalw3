@@ -8,8 +8,10 @@
     "dev": "bun --bun vinxi dev --port 5173",
     "build": "bun --bun vinxi build",
     "preview": "bun --bun vinxi preview --port 4173",
-    "start": "bun --bun vinxi start",
+    "start": "bun ../../scripts/serve-solid-static.ts",
+    "start:vinxi": "bun --bun vinxi start",
     "check": "tsc --noEmit",
+    "test": "bun test src/lib",
     "i18n:check": "bun --bun ./scripts/check-i18n.mjs"
   },
   "dependencies": {

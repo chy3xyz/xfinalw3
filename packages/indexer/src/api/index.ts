@@ -8,6 +8,7 @@ import { counterConfigured } from "../counterConfigured"
 import { warnIndexerApiEnv } from "./assertEnv"
 import { mountAdminAuth, requireAdmin } from "./adminAuth"
 import { graphqlGuard } from "./graphqlGuard"
+import { requestLog } from "./requestLog"
 import { mountRpcProxy } from "./rpcProxy"
 
 warnIndexerApiEnv()
@@ -25,6 +26,7 @@ function resolveCorsOrigin(origin: string): string | null {
   return whitelist.includes(origin) ? origin : null
 }
 
+app.use("*", requestLog)
 app.use("*", cors({ origin: resolveCorsOrigin, credentials: true }))
 app.use("*", graphqlGuard)
 

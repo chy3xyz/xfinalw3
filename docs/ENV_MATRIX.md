@@ -45,14 +45,17 @@
 | `RPC_GATEWAY_ALLOW_UNKNOWN` | 可选 | `1`/`0`；**生产默认拒绝未知方法** |
 | `ADMIN_PASSWORD_SHA256` / `ADMIN_ACCOUNTS` | 管理端 | `/mng` cookie 登录 |
 | `CORS_ORIGINS` | 可选 | 逗号分隔；空则 `*` |
+| `LOG_FORMAT` | 可选 | `json` / `text`；生产默认 json（访问日志） |
+| `LOG_HTTP` | 可选 | 非 json 时设 `1` 打印文本 access 行 |
 
-API 默认 `:42069`。内置 `/health`；应用就绪 `/app/ready`。
+API 默认 `:42069`。内置 `/health`；应用就绪 `/app/ready`。响应头 `X-Request-Id`。
 
 ## Job / Cron（`packages/job`，包名 `@w3s/cron`）
 
 | 变量 | 必需 | 说明 |
 |------|------|------|
-| `PRIVATE_KEY` | **必需** | 作业签名账户 |
+| `PRIVATE_KEY_FILE` | 推荐 | 文件内 `0x…` 私钥（优先于 `PRIVATE_KEY`） |
+| `PRIVATE_KEY` | 二选一 | 明文；**生产默认拒绝**，需 `ALLOW_PLAINTEXT_PRIVATE_KEY=1` |
 | `RPC_URL` | 可选 | 默认 `http://127.0.0.1:8545` |
 | `CHAIN_ID` | 可选 | 默认 `31337` |
 | `CONTRACT_ADDRESS` | **必需** | Counter（或目标）合约地址 |

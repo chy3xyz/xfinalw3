@@ -1,0 +1,25 @@
+# Static Solid dApp with security headers (matches packages/solid securityHeaders).
+:80 {
+	root * /srv
+	encode gzip
+	try_files {path} /index.html
+	file_server
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options DENY
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		Cross-Origin-Opener-Policy same-origin
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: wss: http://127.0.0.1:* http://localhost:*; frame-src 'self' https:; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; object-src 'none'"
+	}
+
+	# Optional: reverse-proxy indexer when running on host :42069
+	# handle /api/* {
+	# 	uri strip_prefix /api
+	# 	reverse_proxy host.docker.internal:42069
+	# }
+	# handle /rpc {
+	# 	reverse_proxy host.docker.internal:42069
+	# }
+}
